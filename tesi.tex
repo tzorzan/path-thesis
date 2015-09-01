@@ -1,0 +1,226 @@
+\documentclass[a4paper, 12pt, twoside, openright]{book}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+%------------------------------ colors
+\usepackage[usenames,dvipsnames,table]{xcolor} % use colors on table and more
+\definecolor{333}{RGB}{51, 51, 51} % define custom color
+%------------------------------ source code
+\usepackage{listings}
+\lstset{
+  basicstyle=\footnotesize\sffamily,
+  commentstyle=\itshape\color{gray},
+  captionpos=b,
+  frame=shadowbox,
+  language=HTML,
+  rulesepcolor=\color{333},
+  tabsize=2
+}
+%------------------------------ define Abstract environment, missing in the 'book' class
+\newenvironment{abstract}{\cleardoublepage \null \vfill \begin{center}\bfseries\abstractname \end{center}}{\vfill\null}
+\addto\captionsenglish{\renewcommand*\abstractname{Sommario}} % change Abstract title
+%------------------------------ active url
+\usepackage{url}
+\renewcommand{\UrlFont}{\color{black}\small\ttfamily}
+\usepackage[colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black]{hyperref} % active ref
+%------------------------------ macros
+\newcommand{\sectionname}{Section} % define Section ref
+\newcommand{\subsectionname}{Sub-section} % define Sub-section ref
+\renewcommand*\arraystretch{1.4} % tables padding
+
+
+\begin{document}
+\frontmatter
+
+\begin{titlepage} %------------------------------ TITLE PAGE
+\begin{center}
+\vbox to0pt{\vbox to\textheight{\vfill \includegraphics[width=11.5cm]{images/unipd-light.png} \vfill}\vss}
+
+\hspace{0.5cm}
+\begin{minipage}{.20\textwidth}
+  \includegraphics[height=2.5cm]{images/unipd-bn.png}
+\end{minipage}\begin{minipage}{.90\textwidth}
+  \begin{table}[H]
+  \begin{tabular}{l}
+  \scshape{\Large{\bfseries{Università degli Studi di Padova}}} \\
+  \hline \\
+  \scshape{\Large{Dipartimento di Matematica}} \\
+  \end{tabular}
+  \end{table}
+\end{minipage}
+
+\vspace{1cm}
+\emph{\Large{Laurea~Magistrale~in~Informatica}} \\
+\vspace{0.5cm}
+\emph{\Large{Indirizzo~Sistemi}} \\
+\vspace{1.5cm}
+\scshape{\Large{\bfseries{PathS Server: ...}}} \\
+\vspace{0.2cm} \linespread{1} \scshape{\large{\bfseries{(sottotitolo tesi)}}}
+\end{center}
+
+\vfill
+\begin{normalsize}
+\begin{flushleft}
+  \hspace{45pt} \textit{Laureando} \hspace{160pt} \textit{Relatore}\\
+  \vspace{5pt}
+  \hspace{30pt} \large{\textbf{Tobia Zorzan}} \hspace{70pt} \large{\textbf{Prof. Claudio Palazzi}}\\
+  \vspace{10pt}
+  \hspace{260pt} \normalsize{\textit{Co-relatore}}\\
+  \vspace{5pt}
+  \hspace{200pt} \large{\textbf{Prof.ssa Ombretta Gaggi}}
+\end{flushleft}
+\end{normalsize}
+
+\vfill
+\begin{center}
+\hspace{-0.2cm}
+\line(1, 0){360}
+
+\textsc{Anno Accademico 2014/2015}
+\end{center}
+\end{titlepage}
+
+
+\cleardoublepage % make left page blank
+\thispagestyle{empty} %------------------------------ DEDICA
+
+\null
+\vspace{2cm}
+\begin{flushright}
+A ...
+\end{flushright}
+\vfill
+
+\begin{quote}
+  Quote
+
+  \textit{Author}
+\end{quote}
+\vfill
+\null
+
+
+\begingroup %------------------------------ CONTENTS
+  \makeatletter
+  \let\ps@plain\ps@empty
+  \makeatother
+  \tableofcontents
+  \clearpage
+\endgroup
+
+
+\begin{abstract} %------------------------------ ABSTRACT
+\markboth{}{} % remove header
+\thispagestyle{empty}
+I recenti sviluppi dei dispositivi \emph{smartphone}, in particolare l'inclusione di sensori sempre più evoluti, ha portato alla definizione di un nuovo paradigma denominato \emph{Web\textsuperscript{2}} (\emph{Web Squared}). La diffusione capillare di questi strumenti consente di creare una rete di sensori distribuiti in grado di raccogliere una ingente mole di dati. I dati stessi possono essere quindi elaborati e fornire il supporto a nuovi servizi che non si basano sulle sole informazioni \emph{statiche} ma su un contesto \emph{dinamico} modificato dall'interazione degli utenti. Il progetto \emph{PathS} vuole essere un prototipo che segue questo paradigma. La sua componente \emph{client} raccoglie informazioni aggiuntive sui percorsi pedonali percorsi dagli utenti. La parte \emph{server} elabora le informazioni raccolte e mantiene una base di dati in grado di supportare servizi di interrogazione che adottano criteri aggiuntivi a quelli tradizionali.
+Si espone quindi quali sono stati i criteri e le valutazioni eseguite nella realizzazione del componente \emph{PathS Server}, i risultati raggiunti e le possibili aree di miglioramento individuate.
+\end{abstract}
+
+
+\mainmatter
+
+\iffalse
+- Introduzione: riassunto dei capitoli e dei contenuti
+- Contesto e Lavori Correlati
+  - Web Squared
+  - Related Works
+- PathS Client
+  - Obiettivi
+  - Tecnologie
+  - Stato dell'arte
+- PathS Server
+  - requisiti
+  - componenti
+  - Tecnologie e linee guida
+    - Play! Framework
+    - PostgreSQL
+    - Libreria LeafletJS
+- Ricezione dei campioni
+  - formato GeoJson
+  - api Stub
+- Elaborazione dei campioni
+  - servizi di mappe
+    - Google Maps
+    - OpenStreet Map
+      - Overpass API
+  - persistenza ed eleaborazione dei dati GIS
+    - PostGIS
+    - JTS
+    - PGRouting
+ - Algoritmo di Map Matching
+    - ST Map Matching
+    - Implementaizone Algoritmo
+      - step 1
+      - step 2
+      - step 3
+- Servizi di routing
+  - Obiettivi
+  - Servizio Map Quest
+  - Shortest Path (Dijkstra)
+  - Percorsi particolari
+- Risultati
+- Miglioramenti ed Evoluzioni
+
+\fi
+
+\chapter{Introduzione} %------------------------------ INTRODUZIONE
+\thispagestyle{empty}
+
+Introduzione al progetto. Presentazione dello scopo principale e degli attori coinvolti. Rassegna del contenuto dei capitoli.
+
+\chapter{Contesto e lavori correlati} %------------------------------ CONTESTO
+\thispagestyle{empty}
+
+\section{Web\textsuperscript{2}}
+Presentazione del paradigma Web\textsuperscript{2} \cite{web2palazzi} ed esempi di applicazione. Opportunistic sensing e applicazione al progetto.
+
+\section{Lavori correlati}
+Presentazione progetto Path 1.0 e valutazioni. Motivazioni sviluppo nuova architettura. 
+Accenno altri progetti simili o correlati.
+
+\chapter{PathS Client} %------------------------------ PATHS CLIENT
+\thispagestyle{empty}
+
+Introduzione alla componente \emph{client} di \emph{PathS}. 
+
+\section{Requisiti}
+Presentazione degli obiettivi riguardanti la parte client. Raccolta dei campioni tramite sensori, offrire servizio di routing, coinvolgimento utente (tramite AR).
+
+\section{Tecnologie}
+Riassunto delle tecnologie adottate per la realizzazione della componente \emph{client}: AndroidSDK, Wikitude.
+
+\section{Stato dell'arte}
+Risultati ottenuti con la parte client. Funzionamento ed eventuali limiti riscontrati.
+
+\chapter{PathS Server} %------------------------------ PATHS SERVER
+\thispagestyle{empty}
+
+Introduzione alla componente \emph{server} di \emph{PathS}. 
+
+\section{Requisiti}
+Dettaglio dei requisiti per la parte server.
+
+\section{Componenti}
+Identificazione delle componenti logiche del server sulla base delle funzioni che deve svolgere.
+\subsection{Ricezione dei campioni}
+\subsection{Elaborazione dei campioni}
+\subsection{Interrogazione}
+
+\section{Tecnologie e linee guida}
+Tecnologie e librerie selezionate per l'applicazione globale al sistema server (Play! Framework, PostgresSQL, LeafletJS, Bootstrap). Presentazione dei criteri non funzionali con i quali è stato sviluppato il server (suddivisione delle responsabilitò, astrazione, estensibilità).
+
+\backmatter
+
+\begingroup %------------------------------ BIBLIOGRAPHY
+  \makeatletter
+  \let\ps@plain\ps@empty
+  \makeatother
+  \bibliography{tesi}
+  \addcontentsline{toc}{chapter}{Bibliography}
+  \bibliographystyle{ieeetr} % sort in order of appearance
+\endgroup
+\end{document} 
