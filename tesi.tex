@@ -58,8 +58,8 @@
 \vspace{0.5cm}
 \emph{\Large{Indirizzo~Sistemi}} \\
 \vspace{1.5cm}
-\scshape{\Large{\bfseries{PathS Server: ...}}} \\
-\vspace{0.2cm} \linespread{1} \scshape{\large{\bfseries{(sottotitolo tesi)}}}
+\scshape{\Large{\bfseries{PathS: un servizio Location-Based per percorsi alternativi}}} \\
+\vspace{0.2cm} \linespread{1} \scshape{\large{\bfseries{(Studio ed implementazione della componente server.)}}}
 \end{center}
 
 \vfill
@@ -85,23 +85,23 @@
 \end{titlepage}
 
 
-\cleardoublepage % make left page blank
-\thispagestyle{empty} %------------------------------ DEDICA
+%-\cleardoublepage % make left page blank
+%-\thispagestyle{empty} %------------------------------ DEDICA
 
-\null
-\vspace{2cm}
-\begin{flushright}
-A ...
-\end{flushright}
-\vfill
+%-\null
+%-\vspace{2cm}
+%-\begin{flushright}
+%-A ...
+%-\end{flushright}
+%-\vfill
 
-\begin{quote}
-  Quote
+%-\begin{quote}
+%-  Quote
 
-  \textit{Author}
-\end{quote}
-\vfill
-\null
+%-  \textit{Author}
+%-\end{quote}
+%-\vfill
+%-\null
 
 
 \begingroup %------------------------------ CONTENTS
@@ -123,50 +123,6 @@ Si espone quindi quali sono stati i criteri e le valutazioni eseguite nella real
 
 \mainmatter
 
-\iffalse
-- Introduzione: riassunto dei capitoli e dei contenuti
-- Contesto e Lavori Correlati
-  - Web Squared
-  - Related Works
-- PathS Client
-  - Obiettivi
-  - Tecnologie
-  - Stato dell'arte
-- PathS Server
-  - requisiti
-  - componenti
-  - Tecnologie e linee guida
-    - Play! Framework
-    - PostgreSQL
-    - Libreria LeafletJS
-- Ricezione dei campioni
-  - formato GeoJson
-  - api Stub
-- Elaborazione dei campioni
-  - servizi di mappe
-    - Google Maps
-    - OpenStreet Map
-      - Overpass API
-  - persistenza ed eleaborazione dei dati GIS
-    - PostGIS
-    - JTS
-    - PGRouting
- - Algoritmo di Map Matching
-    - ST Map Matching
-    - Implementaizone Algoritmo
-      - step 1
-      - step 2
-      - step 3
-- Servizi di routing
-  - Obiettivi
-  - Servizio Map Quest
-  - Shortest Path (Dijkstra)
-  - Percorsi particolari
-- Risultati
-- Miglioramenti ed Evoluzioni
-
-\fi
-
 \chapter{Introduzione} %------------------------------ INTRODUZIONE
 \thispagestyle{empty}
 
@@ -175,12 +131,16 @@ Introduzione al progetto. Presentazione dello scopo principale e degli attori co
 \chapter{Contesto e lavori correlati} %------------------------------ CONTESTO
 \thispagestyle{empty}
 
-\section{Web\textsuperscript{2}}
-Presentazione del paradigma Web\textsuperscript{2} \cite{web2palazzi} ed esempi di applicazione. Opportunistic sensing e applicazione al progetto.
+\section{Web\textsuperscript{2} e Opportunistic Sensing}
+Presentazione del paradigma Web\textsuperscript{2} \cite{web2palazzi} ed esempi di applicazione. Opportunistic Sensing e applicazione dei principi al progetto. 
 
-\section{Lavori correlati}
+\section{Mobility Data Managment and Exploration}
+Introduzione ai Mobility Data, cosa sono e a cosa possono servire. Panoramica sui requisiti necessari alla persistenza, all'elaborazione e all'interrogazione di questo tipo di dati. Dettaglio sulle tecniche di \emph{Trajectory Reconstruction}. Dettaglio sul tipo di problemi che risolve la gestione dei \emph{Mobility Data} con sistemi complessi tipo HERMES. Tutto materiale tratto da \cite{mdme} in particolare i primi capitoli e il cap. 3.
+Perchè non abbiamo utilizzato questo approccio per lo sviluppo del progetto. 
+
+\section{Versione precedente e lavori correlati}
 Presentazione progetto Path 1.0 e valutazioni. Motivazioni sviluppo nuova architettura. 
-Accenno altri progetti simili o correlati.
+Accenno ai progetti di Mobile Crowd Sensing (Crowd++ \cite{crowdplusplus} e Partecipact \cite{participact}).
 
 \chapter{PathS Client} %------------------------------ PATHS CLIENT
 \thispagestyle{empty}
@@ -188,7 +148,12 @@ Accenno altri progetti simili o correlati.
 Introduzione alla componente \emph{client} di \emph{PathS}. 
 
 \section{Requisiti}
-Presentazione degli obiettivi riguardanti la parte client. Raccolta dei campioni tramite sensori, offrire servizio di routing, coinvolgimento utente (tramite AR).
+Presentazione degli obiettivi riguardanti la parte client:
+\begin{itemize}
+\item raccogliere campioni tramite sensore di luminosità e microfono;
+\item offrire indicazioni di percorso;
+\item coinvolgere utente (tramite esperienza Augmented Reality).
+\end{itemize}
 
 \section{Tecnologie}
 Riassunto delle tecnologie adottate per la realizzazione della componente \emph{client}: AndroidSDK, Wikitude.
@@ -202,16 +167,64 @@ Risultati ottenuti con la parte client. Funzionamento ed eventuali limiti riscon
 Introduzione alla componente \emph{server} di \emph{PathS}. 
 
 \section{Requisiti}
-Dettaglio dei requisiti per la parte server.
+Dettaglio dei requisiti per la parte server: raccolta campioni, persistenza, interfacciamento con il client, associazione dei campioni ai percorsi, servizio di routing.
 
 \section{Componenti}
 Identificazione delle componenti logiche del server sulla base delle funzioni che deve svolgere.
 \subsection{Ricezione dei campioni}
+La componente di ricezione campioni deve colloquiare con il client. Necessità di definire un formato chiaro e \emph{standard}, facilmente implementabile con qualsiasi tecnologia \emph{client} ed eventualmente da altri sorgenti dati.
 \subsection{Elaborazione dei campioni}
+I campioni così come sono ricevuti dai client sono in formato grezzo e non consentono di sfruttare le inormazioni in esse contenute. Il passo principale per l'utilizzo dei dati è quello di associare ciascun dato ad un segmento della rete di trasporto. 
 \subsection{Interrogazione}
+Lo scopo pensato per l'utilizzo delle informazioni raccolte è quello di fornire servizi \emph{routing} alternativi, che tengano conto dei dati raccolti per suggerire percorsi che vanno oltre la semplice regola del percorso più breve. Il componente deve quindi:
+\begin{itemize}
+\item definire un formato di colloquio con il client per i percorsi;
+\item implementare un algoritmo di routing;
+\item modificare l'algoritmo di routing affinché consideri le informazioni aggiuntive.
+\end{itemize}
 
 \section{Tecnologie e linee guida}
-Tecnologie e librerie selezionate per l'applicazione globale al sistema server (Play! Framework, PostgresSQL, LeafletJS, Bootstrap). Presentazione dei criteri non funzionali con i quali è stato sviluppato il server (suddivisione delle responsabilitò, astrazione, estensibilità).
+Tecnologie e librerie selezionate per l'applicazione globale al sistema server (Play! Framework, PostgresSQL, LeafletJS, Bootstrap). Presentazione dei criteri non funzionali con i quali è stato sviluppato il server (suddivisione delle responsabilità, astrazione, estensibilità).
+
+\chapter{Ricezione dei campioni} %------------------------------ RICEZIONE CAMPIONI
+\section{Formato}
+Definizione e modifiche al formato di comunicazione.
+\section{Implementazione}
+Modalità di implementazione e deserializzazione.
+\section{Esempi}
+Esempio di invio dal client e risultati ottenuti.
+
+\chapter{Elaborazione dei campioni} %------------------------------ ELABORAZIONE CAMPIONI
+\section{Servizi di Cartografia}
+Requisiti per la selezione di un servizio di mappe su cui basarsi. Analisi comparativa e aspetti principali di:
+\begin{itemize}
+\item Google Maps
+\item Openstreet Map
+\end{itemize}
+Il servizio di interrogazione \emph{Overpass API}, funzionalità e tipo di \emph{query} implementata.
+
+\section{Persistenza ed eleaborazione dei dati GIS}
+Libreria scelta per la persistenza dei dati PostGIS, modello dati del DB e tipi utilizzati. Operazioni di interrogazione supportate dall'estensione del database.
+Libreria scelta per la manipolazione dei dati in ambiente \emph{JAVA} (\emph{JTS}). Operazioni necessari ed esempi di utilizzo. 
+
+\section{Algoritmo di Map Matching}
+Perchè è necessario eseguire una operazione di \emph{map matching}. Cosa servono questo tipo di algoritmi, panoramica sullo stato dell'arte e le soluzioni possibili.
+\subsection{ST-MapMatching}
+Presentazione delle caratteristiche principali dell'algoritmo come presentato in \cite{stmapmatching}.
+\subsection{Pre-elaborazione del percorso - step 1}
+\subsection{Identificazione dei candidati - step 2}
+\subsection{Valutazione e selezione dei candidati - step 3}
+
+\chapter{Routing} %------------------------------ ROUTING
+\section{Obiettivi}
+\section{Implementazioni}
+\subsection{Servizio Map Quest}
+\subsection{Shortest Path}
+\subsection{Percorsi con \emph{label}}
+
+\chapter{Conclusione} %------------------------------ CONCLUSIONE
+\section{Risultati}
+\section{Miglioramenti ed Evoluzioni}
 
 \backmatter
 
