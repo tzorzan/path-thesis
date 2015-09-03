@@ -59,7 +59,7 @@
 \emph{\Large{Indirizzo~Sistemi}} \\
 \vspace{1.5cm}
 \scshape{\Large{\bfseries{PathS: un servizio Location-Based per percorsi alternativi}}} \\
-\vspace{0.2cm} \linespread{1} \scshape{\large{\bfseries{(Studio ed implementazione della componente server.)}}}
+\vspace{0.2cm} \linespread{1} \scshape{\large{\bfseries{(Studio ed implementazione del sistema server)}}}
 \end{center}
 
 \vfill
@@ -117,7 +117,7 @@
 \markboth{}{} % remove header
 \thispagestyle{empty}
 I recenti sviluppi dei dispositivi \emph{smartphone}, in particolare l'inclusione di sensori sempre più evoluti, ha portato alla definizione di un nuovo paradigma denominato \emph{Web\textsuperscript{2}} (\emph{Web Squared}). La diffusione capillare di questi strumenti consente di creare una rete di sensori distribuiti in grado di raccogliere una ingente mole di dati. I dati stessi possono essere quindi elaborati e fornire il supporto a nuovi servizi che non si basano sulle sole informazioni \emph{statiche} ma su un contesto \emph{dinamico} modificato dall'interazione degli utenti. Il progetto \emph{PathS} vuole essere un prototipo che segue questo paradigma. La sua componente \emph{client} raccoglie informazioni aggiuntive sui percorsi pedonali percorsi dagli utenti. La parte \emph{server} elabora le informazioni raccolte e mantiene una base di dati in grado di supportare servizi di interrogazione che adottano criteri aggiuntivi a quelli tradizionali.
-Si espone quindi quali sono stati i criteri e le valutazioni eseguite nella realizzazione del componente \emph{PathS Server}, i risultati raggiunti e le possibili aree di miglioramento individuate.
+Si espone quindi quali sono stati i principi e le valutazioni eseguite nella realizzazione del componente \emph{PathS Server}, i risultati raggiunti e le possibili aree di miglioramento individuate.
 \end{abstract}
 
 
@@ -190,7 +190,7 @@ Tecnologie e librerie selezionate per l'applicazione globale al sistema server (
 \section{Formato}
 Definizione e modifiche al formato di comunicazione.
 \section{Implementazione}
-Modalità di implementazione e deserializzazione.
+Modalità di implementazione e deserializzazione dei dati.
 \section{Esempi}
 Esempio di invio dal client e risultati ottenuti.
 
@@ -205,26 +205,43 @@ Il servizio di interrogazione \emph{Overpass API}, funzionalità e tipo di \emph{
 
 \section{Persistenza ed eleaborazione dei dati GIS}
 Libreria scelta per la persistenza dei dati PostGIS, modello dati del DB e tipi utilizzati. Operazioni di interrogazione supportate dall'estensione del database.
-Libreria scelta per la manipolazione dei dati in ambiente \emph{JAVA} (\emph{JTS}). Operazioni necessari ed esempi di utilizzo. 
+Libreria scelta per la manipolazione dei dati in ambiente \emph{JAVA}:\emph{JTS}. Operazioni necessarie ed esempi di utilizzo. 
 
 \section{Algoritmo di Map Matching}
-Perchè è necessario eseguire una operazione di \emph{map matching}. Cosa servono questo tipo di algoritmi, panoramica sullo stato dell'arte e le soluzioni possibili.
+Perchè è necessario eseguire una operazione di \emph{map matching}. A cosa servono questo tipo di algoritmi, panoramica sullo stato dell'arte e le soluzioni possibili.
 \subsection{ST-MapMatching}
-Presentazione delle caratteristiche principali dell'algoritmo come presentato in \cite{stmapmatching}.
+Esposizione delle caratteristiche principali dell'algoritmo come presentato in \cite{stmapmatching}.
 \subsection{Pre-elaborazione del percorso - step 1}
+Calcolo della bounding box, recupero della rete di trasporto coinvolta e inserimento a sistema.
 \subsection{Identificazione dei candidati - step 2}
+Definizione e modalità di calcolo dei candidati. Operazioni implementate ed esempi di esecuzione.
 \subsection{Valutazione e selezione dei candidati - step 3}
+Applicazione della valutazione spazio-temporale dei campioni. Algoritmo di selezione dei candidati da assegnare ai campioni. 
 
 \chapter{Routing} %------------------------------ ROUTING
-\section{Obiettivi}
-\section{Implementazioni}
+Requisiti del servizio di routing. Definizione del formato di colloquio (GeoJSON) e interpretazione lato client.
+\section{Implementazione}
+Modalità generali di implementazione e interfaccia \emph{Router}.
+Pre-elaborazione e gestione dei segmenti a sistema tramite operazione di \emph{noding} e creazione della topologia (nodi e archi).
+\section{Percorsi calcolati}
 \subsection{Servizio Map Quest}
+Interrogazione del servizio Map Quest come riscontro e \emph{fallback}. 
 \subsection{Shortest Path}
+Calcolo del percorso minimo con la libreria PGRouting.
 \subsection{Percorsi con \emph{label}}
+Calcolo dei percorsi valutando le label di luminosità e rumorosità. Viste e funzioni di supporto sul database. Modalità di calcolo dei costi, spiegazione delle formule.
 
 \chapter{Conclusione} %------------------------------ CONCLUSIONE
 \section{Risultati}
+Risultato complessivo del progetto. Funzionamento end-to-end con screenshot ed esempi.
 \section{Miglioramenti ed Evoluzioni}
+Limiti e compromessi dell'attuale implementazione. Aree di miglioramento ed evoluzione, tra cui:
+\begin{itemize}
+\item suddivisione ulteriore dei tratti di percorso;
+\item alternative algoritmi di map-matching;
+\item altri algoritmi di routing;
+\item servizi aggiuntivi al routing (analisi dei posti più frequentati, funzioni ``get-together'' e \emph{social oriented}).
+\end{itemize}
 
 \backmatter
 
