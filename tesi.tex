@@ -5,7 +5,10 @@
 \usepackage{fancyhdr}
 \usepackage{float}
 \usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{wrapfig}
+
 %------------------------------ colors
 \usepackage[usenames,dvipsnames,table]{xcolor} % use colors on table and more
 \definecolor{333}{RGB}{51, 51, 51} % define custom color
@@ -130,13 +133,40 @@ Introduzione al progetto. Presentazione dello scopo principale e degli attori co
 
 \chapter{Contesto e lavori correlati} %------------------------------ CONTESTO
 \thispagestyle{empty}
-In questo capitolo si presenta il contesto in cui si è sviluppato il progetto \emph{PathS} ed alcuni concetti fodamentali collegati all'ambito di applicazione. Si citano inoltre progetti con finalità simili e approcci ritenuti interessanti punti di riferimento.
+In questo capitolo si presenta il contesto in cui si è sviluppato il progetto \emph{PathS} ed alcuni concetti fondamentali collegati all'ambito di applicazione. Si citano inoltre progetti con finalità simili e approcci ritenuti interessanti punti di riferimento.
 
 \section{Web\textsuperscript{2} e Opportunistic Sensing}
 Una rete di sensori o \emph{Sensor Network} è composta di elementi autonomi e distribuiti atti al monitoraggio di determinati parametri ambientali. Ciascun nodo ha capacità autonome di calcolo, percezione e misurazione dell'ambiente circostante, comunicazione ed eventualmente di mobilità. Molte ricerche si sono focalizzate in questo ambito, in particolare con lo scopo di definire un sistema affidabile e decentralizzato per la comunicazione e il supporto a servizi in questo scenario. Raramente questo tipo di soluzioni sono andate oltre l'ambito della sperimentazione fino all'applicazione su larga scala.
 Il recente sviluppo tecnologico e la diffusione capillare dei dispositivi \emph{smartphone} ha radicalmente modificato la situazione, aprendo la possibilità ad importanti evoluzioni. Di fatto anche un dispositivo base ha tutte le caratteristiche necessarie, essendo dotato di un sistema GPS, moduli di connessione alla rete dati e numerosi sensori tra cui quello di prossimità, luminosità, microfono, fotocamera e accelerometri. In questo modo si possono coprire ampie zone geografiche con un buon numero di dispositivi, offrendo sia l'occasione di applicare le ricerche sviluppate nell'ambito delle \emph{sensor neteorks}, sia di esplorare scenari del tutto nuovi. Ciò che rende ancora più interessante l'applicazione di una rete pervasiva di dispositivi, non è solo la possibilità di migliorare i servizi per gli utilizzatori diretti, ma la possibilità di studiare scenari del tutto nuovi a giovamento dell'intera società.
-Pensiamo a quella che è giè stata una grande evoluzione del mondo di internet, ovvero il \emph{Web 2.0}. Il suo avvento è fatto coincidere con la diffusione dei social networks, alla cui base c'è l'elevato livello di interazione tra il sito Web e gli utenti stessi. In ogni caso è richiesta una interazione diretta dell'utilizzatore, il quale consapevolmente contribuisce ad aumentare la base delle informazioni. Lo sviluppo di alcune tecnologie specifiche (tra cui \emph{AJAX}) ha permesso lo scambio di dati in background fra Web browser e server consentendo l'aggiornamento dinamico della pagina senza esplicito ricaricamento da parte dell'utente. Fondamentalmente si è passati da un Web statico a uno di tipo dinamico e sociale in cui l'utente non è più solo un lettore e un consumatore passivo di contenuti, ma è il principale creatore di essi.
-La diffusione capillare di questi dispositivi con sensori avanzati, apre la strada al paradigma \emph{Web\textsuperscript{2}} in cui la quantità di dati, raccolta anche senza l'esperienza utente diretta, non aumenta in modo lineare ma letteralmente esplode con andamento esponenziale. Diventa quindi di fondamentale importanza le modalità con cui si raccoglie questa mole di dati e i principi di design con cui si imposta lo sviluppo di appllicazioni in qiuesto contesto. Una buona analisi tecnica e un'architettura di rifermento per lo sviluppo di servizi \emph{Web\textsuperscript{2}} basati su reti di sensori \emph{smartphone} è fornita da \cite{web2palazzi}. Nell'articolo è introdotto e sviluppato il concetto di \emph{opportunistic sensing} il quale è ritornato molto utile anche nel progetto \emph{PathS}. 
+Pensiamo a quella che è già stata una grande evoluzione del mondo di internet, ovvero il \emph{Web 2.0}. Il suo avvento è fatto coincidere con la diffusione dei social networks, alla cui base c'è l'elevato livello di interazione tra il sito Web e gli utenti stessi. In ogni caso è richiesta una interazione diretta dell'utilizzatore, il quale consapevolmente contribuisce ad aumentare la base delle informazioni. Lo sviluppo di alcune tecnologie specifiche (tra cui \emph{AJAX}) ha permesso lo scambio di dati in background fra Web browser e server consentendo l'aggiornamento dinamico della pagina senza esplicito ricaricamento da parte dell'utente. Fondamentalmente si è passati da un Web statico a uno di tipo dinamico e sociale in cui l'utente non è più solo un lettore e un consumatore passivo di contenuti, ma è il principale creatore di essi.
+La diffusione capillare di questi dispositivi con sensori avanzati, apre la strada al paradigma \emph{Web\textsuperscript{2}} in cui la quantità di dati, raccolta anche senza l'esperienza utente diretta, non aumenta in modo lineare ma letteralmente esplode con andamento esponenziale. Diventa quindi di fondamentale importanza le modalità con cui si raccoglie questa mole di dati e i principi di design con cui si imposta lo sviluppo di applicazioni in questo contesto. Una buona analisi tecnica e un'architettura di rifermento per lo sviluppo di servizi \emph{Web\textsuperscript{2}} basati su reti di sensori \emph{smartphone} è fornita da Calma, Palazzi e Bujari in \cite{web2palazzi}. Nell'articolo è introdotto e sviluppato il concetto di \emph{opportunistic sensing} il quale è ritornato molto utile anche nel progetto \emph{PathS}. Gli autori espongono due criteri fondamentali secondo cui categorizzare le applicazioni in ambito \emph{Web Squared}: il primo riguarda la scala di rilevamento, il secondo è il grado di coinvolgimento degli utenti. Considerando la scala di rilevamento possiamo distinguere:
+
+\begin{itemize}
+\item \textbf{personale}: progettata per utenti singoli e i risultati vengono visualizzati solo all'utente stesso, senza la loro condivisione. Un esempio di queste può essere \emph{Dankam}, applicazione che aiuta nell'identificazione dei colori le persone affette da daltonismo;
+\item \textbf{di gruppo}: ad esempio \emph{Nike+ o Runtastic}, applicazioni in cui un gruppo di persone con interessi affini condivide informazioni spesso sfruttando la connessione ai popolari social network;
+\item \textbf{di comunità}: i dati sono raccolti da una vasta gamma di persone e i risultati condivisi pubblicamente per renderli disponibili a tutti gli utenti. Un'esempio di applicazione è Google Maps e la relativa segnalazione dei tratti trafficati.
+\end{itemize}
+\begin{figure}
+\centering
+\begin{subfigure}{.33\textwidth}
+  \centering
+  \includegraphics[height=6cm]{images/dankam2}
+  \caption{\footnotesize{Dankam}}
+  \label{fig:dankam}
+\end{subfigure}%
+\begin{subfigure}{.33\textwidth}
+  \centering
+  \includegraphics[height=6cm]{images/nikeplus}
+  \caption{\footnotesize{Nike+}}
+  \label{fig:nike+}
+\end{subfigure}
+\begin{subfigure}{.33\textwidth}
+  \centering
+  \includegraphics[height=6cm]{images/googlemaps}
+  \caption{\footnotesize{Google Maps}}
+  \label{fig:googlemaps}
+\end{subfigure}
+\end{figure}
 
 \section{Mobility Data Managment and Exploration}
 Introduzione ai Mobility Data, cosa sono e a cosa possono servire. Panoramica sui requisiti necessari alla persistenza, all'elaborazione e all'interrogazione di questo tipo di dati. Dettaglio sulle tecniche di \emph{Trajectory Reconstruction}. Dettaglio sul tipo di problemi che risolve la gestione dei \emph{Mobility Data} con sistemi complessi tipo HERMES. Tutto materiale tratto da \cite{mdme} in particolare i primi capitoli e il cap. 3.
