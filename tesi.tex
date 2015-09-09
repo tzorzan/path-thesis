@@ -62,7 +62,7 @@
 \emph{\Large{Indirizzo~Sistemi}} \\
 \vspace{1.5cm}
 \scshape{\Large{\bfseries{PathS: un servizio Location-Based per percorsi alternativi}}} \\
-\vspace{0.2cm} \linespread{1} \scshape{\large{\bfseries{(Studio ed implementazione del sistema server)}}}
+\vspace{0.2cm} \linespread{1} \scshape{\large{\bfseries{(PathS: a Location-Based service for alternative routes)}}}
 \end{center}
 
 \vfill
@@ -167,6 +167,16 @@ La diffusione capillare di questi dispositivi con sensori avanzati, apre la stra
   \label{fig:googlemaps}
 \end{subfigure}
 \end{figure}
+
+Valutando invece il coinvolgimento con l'utente, le applicazioni di questa categoria si possono suddividere in:
+\begin{itemize}
+  \item \textbf{partecipative}: ovvero la raccolta dei dati avviene tramite il coinvolgimento esplicito e diretto dell'utente. Ci si affida quindi all'entusiasmo e alla relazione diretta con gli utilizzatori i quali volontariamente eseguono l'applicazione e raccolgono i dati necessari. Solitamente le informazioni che derivano da questa tipologia sono molto accurate e ben distribuite anche per la possibilità di una opportuna pianificazione. La controparte è che spesso non è facile ottenere una sufficiente base di copertura se non si dispone del bacino di utenza e delle risorse necessarie. 
+  \item \textbf{opportunistiche}: in cui l'acquisizione delle informazioni avviene tramite i sensori del dispositivo in determinate situazioni di utilizzo, anche se in quel momento non è l'attività principale. La raccolta avviene quindi in \emph{background} informando, ma non richiedendo necessariamente l'attenzione, dell'utente. In qualche modo si ``distrae'' l'utilizzatore con una attività primaria dall'alto livello di gradimento e nel frattempo si approfitta della situazione per catturare le informazioni necessarie. L'aspetto negativo di questo approccio è principalmente tecnico, dato che la sovrapposizione di più attività comporta un maggiore dispendio di risorse del dispositivo (\emph{cpu}, batteria, rete ...) e al tempo stesso gli algoritmi che devono interpretare i dati provenienti dai sensori e identificare le situazioni \emph{propizie} sono particolarmente complessi. Questo tipo di approccio risulta particolarmente utile per le applicazioni \emph{di comunità} che, pur raccogliendo pochi campioni, possono contare su un'ampio bacino di utenza.
+\end{itemize}
+Nello sviluppo del progetto \emph{PathS} ed in particolare per la progettazione della componente \emph{client} si è pensato di sfruttare entrambi questi aspetti. Tramite il coinvolgimento diretto di alcuni studenti e il coordinamento del Prof. Palazzi e dei suoi collaboratori, è stat organizzata una campagna di campionamento massivo della zona universatiria e dei dintorni. Questo ha consentito sia di valutare il funzionamento del sistema e di raccogliere numerosi \emph{feedback} che di raccogliere una consistente base di informazioni per l'area di riferimento. Per integrare e ampliare questa base di partenza, si è pensato ad un approccio di tipo opportunistico presentato in dettaglio nel capitolo successivo.
+
+Altro aspetto interessante proposto nello stesso articolo è un principio di architettura software secondo cui impostare un servizio basato sul paradigma \emph{Web\textsuperscript{2}}.
+
 
 \section{Mobility Data Managment and Exploration}
 Introduzione ai Mobility Data, cosa sono e a cosa possono servire. Panoramica sui requisiti necessari alla persistenza, all'elaborazione e all'interrogazione di questo tipo di dati. Dettaglio sulle tecniche di \emph{Trajectory Reconstruction}. Dettaglio sul tipo di problemi che risolve la gestione dei \emph{Mobility Data} con sistemi complessi tipo HERMES. Tutto materiale tratto da \cite{mdme} in particolare i primi capitoli e il cap. 3.
