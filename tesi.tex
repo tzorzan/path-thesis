@@ -5,9 +5,13 @@
 \usepackage{fancyhdr}
 \usepackage{float}
 \usepackage{graphicx}
+\graphicspath{ {images/} }
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{wrapfig}
+\usepackage{diagbox}
+\usepackage[style=numeric, backend=biber]{biblatex}
+\addbibresource{tesi.bib}
 
 %------------------------------ colors
 \usepackage[usenames,dvipsnames,table]{xcolor} % use colors on table and more
@@ -41,11 +45,11 @@
 
 \begin{titlepage} %------------------------------ TITLE PAGE
 \begin{center}
-\vbox to0pt{\vbox to\textheight{\vfill \includegraphics[width=11.5cm]{images/unipd-light.png} \vfill}\vss}
+\vbox to0pt{\vbox to\textheight{\vfill \includegraphics[width=11.5cm]{unipd-light.png} \vfill}\vss}
 
 \hspace{0.5cm}
 \begin{minipage}{.20\textwidth}
-  \includegraphics[height=2.5cm]{images/unipd-bn.png}
+  \includegraphics[height=2.5cm]{unipd-bn.png}
 \end{minipage}\begin{minipage}{.90\textwidth}
   \begin{table}[H]
   \begin{tabular}{l}
@@ -210,18 +214,43 @@ Come vediamo il concetto di \emph{mobility data} è molto vario e può essere ap
   \item \textbf{servizi \emph{location-aware}}: qual è l'attività commerciale più vicina alla mia posizione attuale o al percorso che ho intenzione di seguire? Quali dei mia amici \emph{facebook} è in prossimità della città che sto visitando?
 \end{itemize}
 
-Quelli riportati sono solo alcuni esempi, ma più in generale lo studio di \emph{Mobility Data} e lo studio di \emph{database} di traiettorie può portare allo sviluppo di \emph{Location Based Services} e \emph{Location Based Social Networks}. 
+Quelli riportati sono solo alcuni esempi, ma più in generale lo studio di \emph{mobility data} e di \emph{database} di traiettorie può supportare lo sviluppo di \emph{Location Based Services} ed applicazioni \emph{Location-} e \emph{Mobility-Aware}. Per \emph{\textbf{Location Based Service}} si intendono tutti quei servizi che forniscono informazioni ai propri utenti sulla base della posizione geografica corrente. Se il servizio è caratterizzato da un altro grado di interazione tra gli utenti stessi e la formazione di una sorta di rete fra gli stessi, allora si può parlare di \emph{\textbf{Location-based Service Networking}}. Una tassonomia di questi servizi è proposta in tabella \ref{tablelbs} e deriva dal grado di mobilità (stazionario o mobile) degli attori coinvolti ovvero l'utente che interroga il servizio e gli oggetti interrogati a database.
 
-... definizioni LBS/LBSN
+\begin{table}[h!]
+\centering
+\begin{tabular}{ |l||l|l| } 
+ \hline
+ \diagbox{Database Objects}{Reference Object} & \emph{Stationary} & \emph{Mobile} \\ 
+ \hline
+ \hline
+ \emph{Stationary} & 
+  routing & 
+  guide-me \\ 
+ \hline
+ \emph{Mobile} &
+  find-me &
+  get-together \\ 
+ \hline
+\end{tabular}
+\caption{Tassonomia di applicazioni \emph{location-aware}}
+\label{tablelbs}
+\end{table}
 
-... categorie interrogazioni/domande
+Come vediamo l'ambito del progetto \emph{PathS} ha molti aspetti in comune con quelli trattati nel \emph{mobility data managment}. Tuttavia le problematiche che si intendere risolvere (almeno nelle prime fasi del progetto) riguardano la prima classe di problemi (\emph{<stationary, stationary>}) relativamente più conosciuta e trattata in letteratura. 
 
-Come vediamo l'ambito del progetto \emph{PathS} ha molti aspetti in comune con quelli trattati nel \emph{mobility data managment}, tuttavia nel corso dello sviluppo non si è ritenuto oppurtuno utilizzare un sistema \emph{MOTD} per implementare il sistema.
+Modellando la rete di trasporto (\emph{transportation network}) come un grafo $G = (N, E)$ composto da nodi $N$ e archi $E$, l'operazione di \emph{routing} consiste tipicamente nel cercare un percorso ottimale che porti dalla sorgente $S$ alla destinazione $T$ dove $S, T \in N$. Tecnicamente per queste tematiche sono disponibili diversi algoritmi, principalmente basati sulla soluzione del problema di flusso \emph{Shortest Path}. Un adeguamento del calcolo dei pesi utilizzati negli archi della rete, consente di ottenere diverse modalità di navigazione ad esempio la più veloce, la più breve o, come è di recente interesse, la più ecologica.
 
+Per questi motivi nel corso dello sviluppo del progetto \emph{PathS} ci si è allontanati da quelle che sono le problematiche e gli strumenti specifici nell'ambito del \emph{mobility data managment}, seguendo piuttosto altri spunti da cui derivare l'implementazione. Ciò non toglie che l'ambito di applicazione è molto coerente con questo tema e l'adozione di queste tecniche può tornare molto utile nelle possibili evoluzioni del sistema, in particolare se si intende utilizzare i dati per successive analisi o interrogazioni che vadano oltre la tematica del \emph{routing}.
 
-W.I.P.
-Introduzione ai Mobility Data, cosa sono e a cosa possono servire. Panoramica sui requisiti necessari alla persistenza, all'elaborazione e all'interrogazione di questo tipo di dati. Dettaglio sulle tecniche di \emph{Trajectory Reconstruction}. Dettaglio sul tipo di problemi che risolve la gestione dei \emph{Mobility Data} con sistemi complessi tipo HERMES. Tutto materiale tratto da \cite{mdme} in particolare i primi capitoli e il cap. 3.
-Perchè non abbiamo utilizzato questo approccio per lo sviluppo del progetto. 
+\subsection{\emph{Trajectory Reconstruction}}
+L'ampia diffusione di dispositivi dotati di sistema GPS combinata con lo sviluppo di adeguate tecniche di memorizzazione, processamento ed interrogazione dei dati ha portato alla produzioni di immense quantità di dati \emph{location-aware}. Tuttavia la derivazione di informazioni significative da questi dati grezzi non è per nulla banale. Nella trasformazione di questi dati si incontrano diverse problematiche, tra cui la gestione dei segnali di rumore o non accurati, la semplificazione dei \emph{set} di dati ed in particolare l'identificazione delle traiettorie come sequenza ordinata di posizioni campionate.
+La ricostruzione di una traiettoria a partire da un insiemi di dati grezzi è una operazione fondamentale che si rende necessaria prima di qualsiasi altra elaborazione o analisi dei dati.
+Come presentato in \cite[capitolo~3.1]{mdme}
+
+-cosa serve fare tj
+-i passi principali
+- quello che dobbiamo fare in pathS
+
 
 \section{Versione precedente e lavori correlati}
 Presentazione progetto Path 1.0 e valutazioni. Motivazioni sviluppo nuova architettura. 
@@ -334,8 +363,9 @@ Limiti e compromessi dell'attuale implementazione. Aree di miglioramento ed evol
   \makeatletter
   \let\ps@plain\ps@empty
   \makeatother
-  \bibliography{tesi}
-  \addcontentsline{toc}{chapter}{Bibliografia}
-  \bibliographystyle{ieeetr} % sort in order of appearance
+  \printbibliography[
+    heading=bibintoc,
+    title={Bibliografia} ]
 \endgroup
+
 \end{document} 
