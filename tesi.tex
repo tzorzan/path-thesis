@@ -12,6 +12,10 @@
 \usepackage{diagbox}
 \usepackage[style=numeric, backend=biber]{biblatex}
 \addbibresource{tesi.bib}
+\usepackage{amsfonts}
+\usepackage[toc,page]{appendix}
+\renewcommand{\appendixtocname}{Appendice}
+\renewcommand{\appendixpagename}{Appendice}
 
 %------------------------------ colors
 \usepackage[usenames,dvipsnames,table]{xcolor} % use colors on table and more
@@ -245,15 +249,46 @@ Per questi motivi nel corso dello sviluppo del progetto \emph{PathS} ci si è al
 \subsection{\emph{Trajectory Reconstruction}}
 L'ampia diffusione di dispositivi dotati di sistema GPS combinata con lo sviluppo di adeguate tecniche di memorizzazione, processamento ed interrogazione dei dati ha portato alla produzioni di immense quantità di dati \emph{location-aware}. Tuttavia la derivazione di informazioni significative da questi dati grezzi non è per nulla banale. Nella trasformazione di questi dati si incontrano diverse problematiche, tra cui la gestione dei segnali di rumore o non accurati, la semplificazione dei \emph{set} di dati ed in particolare l'identificazione delle traiettorie come sequenza ordinata di posizioni campionate.
 La ricostruzione di una traiettoria a partire da un insiemi di dati grezzi è una operazione fondamentale che si rende necessaria prima di qualsiasi altra elaborazione o analisi dei dati.
-Come presentato in \cite[capitolo~3.1]{mdme}
 
--cosa serve fare tj
--i passi principali
-- quello che dobbiamo fare in pathS
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=10cm]{sliced}
+  \caption{\footnotesize{\emph{Sliced representation} di un oggetto in movimento.}}
+  \label{fig:sliced}
+\end{figure}
+Come presentato in \cite[capitolo~3.1]{mdme}, una definizione teorica del movimento di un oggetto può essere quella di una funzione dallo spazio temporale $I\subseteq\mathbb{R}$ allo spazio geografico $S\subseteq\mathbb{R}^2$:
+$$I\subseteq\mathbb{R} \rightarrow S\subseteq\mathbb{R}^2 : t \rightarrow l(t)$$
+dove con $l(t)$ si intende la posizione in cui si trova l'oggetto all'istante $t$. in questo modo la traiettoria effettiva seguita da un oggetto può essere definita come:
+$$T_{act} = \{t, l(t) | t\in\mathbb{I}\} \subset \mathbb{R}^2\times\mathbb{R}$$
+Questo rappresenta una curva continua nella reltà, tuttavia la forma che ci si trova a raprresentare nei calcolatori è la sua versione finita, definita come sequenza di coppie di valori spazio-tempo:
+$$T = \{<p_1, t_1>, <p_2, t_2>, ... , <p_n, t_n>\}$$
+dove $p_i\in\mathbb{R}^2, t_i\in\mathbb{R}, 1 <= i <= n$ e $t_1 < t_2 < ... < t_n$.
+Il risultato è che una traiettoria può essere rappresentata con un modello che si definisce \emph{sliced representation} come quello in figura \ref{fig:sliced}.
+Questo modello decompone lo sviluppo temporale in frammenti definiti \emph{slice}, tali per cui questa evoluzione può essere descritta da una qualche funzione semplice, ad esempio l'interpolazione lineare.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=10cm]{rawgps}
+  \caption{\footnotesize{Il processo di \emph{trajectory reconstruction} da dati grezzi GPS.}}
+  \label{fig:rawgps}
+\end{figure}
+
+In generale il problema di \emph{trajectory recontruction} si decompone di due operazioni principali:
+\begin{itemize}
+\item \emph{data cleansing}: è la fase in cui si ripuliscono i dati grezzi dai segnali di rumore o dagli eventuali \emph{outlier}, è possibile eseguire operazioni di arrotondamento o altre elaborazioni;
+\item \emph{trajectory identification}: ha l'obiettivo di interpolare la sequenza di posizioni raccolte al fine di approssimare il movimento continuo dell'oggetto.
+\end{itemize}
+In particolare per la seconda operazione le modalità sono tutt'altro che semplici e delineate. Sono disponibili diversi approcci, alcuni che si basano sulle caratteristiche geometriche della rappesentazione dei dati, altri si basano su sistemi probabilistici, altri ancora sono sistemi ibridi.
+
+Anche nel progetto \emph{PathS} si incontra la problematica fondamentale di ricostruire le traiettorie individuate dai campionamenti. L'approccio che si è valutato più opportuno (considerate le caratteristiche dei dati sorgente) è stato quello di utilizzare un algoritmo di \emph{map matching}.
+Il caso di \emph{trajectory reconstruction} che si affrontato è stato quindi quello di ricondurre ciascun campionamento ad una posizione corrispondente nella rete di trasporto. Utilizzando la rappresentazione di grafo $G=(V,E)$ composto di archi e vertici, per ciascuna posizione $<p_i, t_i>$ della traiettoria che non appartiene alla rete, si è individuata la corrispondente coppia $<p_i^i, t_i^i>$ in cui $p_i^i \in e_j$.
 
 \section{Versione precedente e lavori correlati}
 Presentazione progetto Path 1.0 e valutazioni. Motivazioni sviluppo nuova architettura. 
+- sdk aggiornata
+- gmaps aggiornato
+- architettura troppo legata a gmaps
+
 Accenno ai progetti di Mobile Crowd Sensing (Crowd++ \cite{crowdplusplus} e Partecipact \cite{participact}).
 
 \chapter{PathS Client} %------------------------------ PATHS CLIENT
@@ -356,6 +391,11 @@ Limiti e compromessi dell'attuale implementazione. Aree di miglioramento ed evol
 \item altri algoritmi di routing;
 \item servizi aggiuntivi al routing (analisi dei posti più frequentati, funzioni ``get-together'' e \emph{social oriented}).
 \end{itemize}
+
+\begin{appendices}
+\chapter{Manuale installazione}
+Requisiti e modalità di installazione.
+\end{appendices}
 
 \backmatter
 
