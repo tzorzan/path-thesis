@@ -280,16 +280,25 @@ In generale il problema di \emph{trajectory recontruction} si decompone di due o
 \end{itemize}
 In particolare per la seconda operazione le modalità sono tutt'altro che semplici e delineate. Sono disponibili diversi approcci, alcuni che si basano sulle caratteristiche geometriche della rappesentazione dei dati, altri si basano su sistemi probabilistici, altri ancora sono sistemi ibridi.
 
-Anche nel progetto \emph{PathS} si incontra la problematica fondamentale di ricostruire le traiettorie individuate dai campionamenti. L'approccio che si è valutato più opportuno (considerate le caratteristiche dei dati sorgente) è stato quello di utilizzare un algoritmo di \emph{map matching}.
+Anche in \emph{PathS} si incontra la problematica fondamentale di ricostruire le traiettorie individuate dai campionamenti. L'approccio che si è valutato più opportuno (considerate le caratteristiche dei dati sorgente) è stato quello di utilizzare un algoritmo di \emph{map matching}.
 Il caso di \emph{trajectory reconstruction} che si affrontato è stato quindi quello di ricondurre ciascun campionamento ad una posizione corrispondente nella rete di trasporto. Utilizzando la rappresentazione di grafo $G=(V,E)$ composto di archi e vertici, per ciascuna posizione $<p_i, t_i>$ della traiettoria che non appartiene alla rete, si è individuata la corrispondente coppia $<p_i^i, t_i^i>$ in cui $p_i^i \in e_j$.
 
 \section{Versione precedente e lavori correlati}
-Presentazione progetto Path 1.0 e valutazioni. Motivazioni sviluppo nuova architettura. 
-- sdk aggiornata
-- gmaps aggiornato
-- architettura troppo legata a gmaps
+L'idea di sviluppo del progetto non è del tutto nuova, ma prende spunto da un lavoro precedente svolto sempre all'interno dell'Università di Padova dallo studente Lorenzo Teodori seguito dal Prof. Palazzi. Il progetto chiamato \emph{Path2.0} voleva essere un sistema partecipativo per fornire indicazioni di navigazione accessibile per utenti con disabilità. L'idea di base è quella sviluppata in \emph{PathS}, ovvero raccogliere informazioni da un insieme di utenti per poi riutilizzarle nel suggerire dei percorsi pedonali. Gli obiettivi in cui questo progetto estende e sviluppa l'idea iniziale sono i seguenti:
+\begin{itemize}
+\item estendere il concetto di informazione aggiuntiva sul percorso, non trattare solo l'accessibilità (valori $1$, $0$) ma delle \emph{label} più generiche;
+\item implementare soluzioni che rispondessero con percorsi diversi dal semplice percorso accessibile e percorso breve;
+\item fornire una base di dati elaborati che consenta non solo il \emph{routing}, ma anche l'analisi o l'applicazione ad altri scenari in chiave sociale.
+\end{itemize}
+Dal punto di vista tecnologico, si è preferito fare tesoro del'esperienza precedente e strutturare un sistema completamente nuovo per le seguenti motivazioni:
+\begin{itemize}
+\item il sistema SDK utilizzato nello sviluppo dell'applicazione \emph{mobile} era molto datato, richiedeva un profondo aggiornamento e la revisione di alcune modalità di sviluppo;
+\item tutta la soluzione era molto legata e del tutto dipendente dai sevizi API di Google Maps (anch'essi da aggiornare);
+\item il progetto di partenza non presentava dei caratteri architetturali sufficientemente delineati da consentirne l'utilizzo come base, in particolare per le esigenze di espansione ed evoluzione ad altri contesti;
+\end{itemize}
 
-Accenno ai progetti di Mobile Crowd Sensing (Crowd++ \cite{crowdplusplus} e Partecipact \cite{participact}).
+Un progetto analogo a \emph{PathS} nel quale si utilizza però il microfono del dispositivo è Crowd++ \cite{crowdplusplus}. Lo scopo dell'applicazione sviluppata è di individuare dati aggiuntive riguardo l'attività sociale dell'utente e l'interazione tra \emph{speaker} e pubblico in un evento. I suoni registrati dal microfono sono utilizzati per individuare il numero di parole pronunciate o il numero di persone che stanno parlando, cercando quindi di derivare le informazioni necessarie.
+Altro esempio da cui si è tratto spunto è il progetto PartecipAct \cite{participact}. Sviluppato recentemente presso l'Università di Bologna, anch'esso ha come obiettivo quello di studiare il potenziale inesplorato della collaborazione tra utenti, sfruttando gli smartphone come strumento di interazione e interconnessione. Coinvolgendo studenti e volontari in un esperimento di raccolta dati, si sono raccolte informazioni sugli utenti e sul contesto in cui si trovano. Tutti i dati vengono memorizzati in un database online cercando rispondere a domande del tipo: ``dove passano la maggior parte del tempo i nostri utenti?''. Come vediamo l'approccio è molto simile a quello di \emph{PathS}, nonostante le modalità di svolgimento e il fine ultimo siano diversi.
 
 \chapter{PathS Client} %------------------------------ PATHS CLIENT
 \thispagestyle{empty}
