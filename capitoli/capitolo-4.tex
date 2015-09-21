@@ -1,0 +1,21 @@
+Introduzione alla componente \emph{server} di \emph{PathS}. 
+
+\section{Requisiti}
+Dettaglio dei requisiti per la parte server: raccolta campioni, persistenza, interfacciamento con il client, associazione dei campioni ai percorsi, servizio di routing.
+
+\section{Componenti}
+Identificazione delle componenti logiche del server sulla base delle funzioni che deve svolgere.
+\subsection{Ricezione dei campioni}
+La componente di ricezione campioni deve colloquiare con il client. Necessità di definire un formato chiaro e \emph{standard}, facilmente implementabile con qualsiasi tecnologia \emph{client} ed eventualmente da altri sorgenti dati.
+\subsection{Elaborazione dei campioni}
+I campioni così come sono ricevuti dai client sono in formato grezzo e non consentono di sfruttare le inormazioni in esse contenute. Il passo principale per l'utilizzo dei dati è quello di associare ciascun dato ad un segmento della rete di trasporto. 
+\subsection{Interrogazione}
+Lo scopo pensato per l'utilizzo delle informazioni raccolte è quello di fornire servizi \emph{routing} alternativi, che tengano conto dei dati raccolti per suggerire percorsi che vanno oltre la semplice regola del percorso più breve. Il componente deve quindi:
+\begin{itemize}
+\item definire un formato di colloquio con il client per i percorsi;
+\item implementare un algoritmo di routing;
+\item modificare l'algoritmo di routing affinché consideri le informazioni aggiuntive.
+\end{itemize}
+
+\section{Tecnologie e linee guida}
+Tecnologie e librerie selezionate per l'applicazione globale al sistema server (Play! Framework, PostgresSQL, LeafletJS, Bootstrap). Presentazione dei criteri non funzionali con i quali è stato sviluppato il server (suddivisione delle responsabilità, astrazione, estensibilità).

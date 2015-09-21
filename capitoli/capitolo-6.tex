@@ -1,0 +1,22 @@
+\section{Servizi di Cartografia}
+Requisiti per la selezione di un servizio di mappe su cui basarsi. Analisi comparativa e aspetti principali di:
+\begin{itemize}
+\item Google Maps
+\item Openstreet Map
+\end{itemize}
+Il servizio di interrogazione \emph{Overpass API}, funzionalità e tipo di \emph{query} implementata.
+
+\section{Persistenza ed eleaborazione dei dati GIS}
+Libreria scelta per la persistenza dei dati PostGIS, modello dati del DB e tipi utilizzati. Operazioni di interrogazione supportate dall'estensione del database.
+Libreria scelta per la manipolazione dei dati in ambiente \emph{JAVA}:\emph{JTS}. Operazioni necessarie ed esempi di utilizzo. 
+
+\section{Algoritmo di Map Matching}
+Perchè è necessario eseguire una operazione di \emph{map matching}. A cosa servono questo tipo di algoritmi, panoramica sullo stato dell'arte e le soluzioni possibili.
+\subsection{ST-MapMatching}
+Esposizione delle caratteristiche principali dell'algoritmo come presentato in \cite{stmapmatching}.
+\subsection{Pre-elaborazione del percorso - step 1}
+Calcolo della bounding box, recupero della rete di trasporto coinvolta e inserimento a sistema.
+\subsection{Identificazione dei candidati - step 2}
+Definizione e modalità di calcolo dei candidati. Operazioni implementate ed esempi di esecuzione.
+\subsection{Valutazione e selezione dei candidati - step 3}
+Applicazione della valutazione spazio-temporale dei campioni. Algoritmo di selezione dei candidati da assegnare ai campioni. 
