@@ -1,0 +1,45 @@
+\documentclass[a4paper, 12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{import}
+\usepackage{fancyhdr}
+\usepackage{float}
+
+%------------------------------ colors
+\usepackage[usenames,dvipsnames,table]{xcolor} % use colors on table and more
+\definecolor{333}{RGB}{51, 51, 51} % define custom color
+%------------------------------ source code
+\usepackage{listings}
+\lstset{
+  basicstyle=\footnotesize\sffamily,
+  commentstyle=\itshape\color{gray},
+  captionpos=b,
+  frame=shadowbox,
+  language=HTML,
+  rulesepcolor=\color{333},
+  tabsize=2
+}
+
+%------------------------------ active url
+\usepackage{url}
+\renewcommand{\UrlFont}{\color{black}\small\ttfamily}
+\usepackage[colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black]{hyperref} % active ref
+%------------------------------ macros
+\newcommand{\sectionname}{Sezione} % define Section ref
+\newcommand{\subsectionname}{Sottosezione} % define Sub-section ref
+\renewcommand*\arraystretch{1.4} % tables padding
+ 
+\title{Manuale di Installazione PathS}
+\author{Tobia Zorzan}
+\date{\today}
+ 
+\begin{document}
+ 
+\maketitle
+
+\tableofcontents
+
+\import{capitoli/}{installazione.tex} %--------------- MANUALE INSTALLAZIONE
+
+\end{document} 

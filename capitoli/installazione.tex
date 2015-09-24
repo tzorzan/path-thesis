@@ -1,0 +1,64 @@
+\chapter{Manuale installazione}
+Si riassumono i requisiti necessari all'installazione del sistema e le modalità di configurazione.
+
+\section{Ambiente}
+Il sistema è stato sviluppato in ambiente \emph{Linux} e per la sua installazione ed esecuzione si consiglia il sistema operativo \emph{Ubuntu Linux ver. 14.04 LTS}. Il requisito non è vincolante, ma semplifica l'installazione e la gestione dei pacchetti necessari per le dipendenze. In termini di risorse il sistema richiede almeno 2 unità di calcolo a 64 bit e 2GB di memoria RAM disponibile.
+
+\section{Dipendenze}
+L'ambiente di esecuzione si compone di due elementi principali, il \textbf{database} contenente tutte le informazioni persistenti del sistema e la \textbf{logica applicativa} sviluppata con tecnologia \emph{Java}.
+
+\subsection{Database}
+E' necessario utilizzare un database \emph{PostgreSQL ver 9.3} o superiore. L'installazione può avvenire sia tramite il gestore dei pacchetti del sistema operativo che in modalità manuale. Oltre al pacchetto standard, sarà necessario installare due estensioni del database, in particolare:
+\begin{itemize}
+\item \textbf{PostGIS}: una estensione che consente la memorizzazione di dati spaziali e fornisce altre funzioni di manipolazione di dati geografici (\url{http://postgis.net});
+\item \textbf{PGRouting}:una libreria che estende ulteriormente le funzioni del database geospaziale introducendo algoritmi di \emph{routing} e procedure di supporto (\url{http://pgrouting.org}).
+\end{itemize}
+Nei sistemi \emph{Ubuntu Linux} l'installazione del servizio di database e di tutte le dipendenze può avvenire tramite l'esecuzione dei comandi:
+\begin{verbatim}
+sudo add-apt-repository ppa:georepublic/pgrouting-unstable
+sudo apt-get update
+sudo apt-get install postgresql-9.3-pgrouting
+\end{verbatim}
+Seguire le indicazioni presentate a riga di comando, in particolare per le prime operazioni in cui si aggiunge un \emph{repository} non ufficiale al gestore dei pacchetti.
+
+\subsection{Java}
+Per eseguire il codice con cui è stata sviluppata la logica applicativa del server, è necessario disporre di un ambiente \emph{Java Virtual Machine} compatibile. Si consiglia di installare il pacchetto \emph{Oracle Sun JDK ver. 1.7.0} secondo le modalità previste dal sistema operativo usato. Non si garantisce l'esecuzione del software in ambiente \emph{Java 8} nè con altre \emph{JVM} diverse da quella Oracle SUN.
+
+Nello sviluppo è stato utilizzato il framework di supporto \emph{Play! Framework ver. 1.2.7}. Installare il pacchetto seguendo le indicazioni sul sito ufficiale (\url{https://www.playframework.com/documentation/1.2.7/install}). La modalità standard consiste nello scaricare l'archivio e scompattarlo in una posizione nota.
+Le librerie necessarie all'esecuzione del codice sono incluse nel \emph{repository} del codice e saranno recuperate tramite i successivi passi di installazione.
+
+\subsection{Repository}
+Il codice sviluppato è disponibile tramite \emph{repository} pubblico \emph{GIT} all'indirizzo \url{https://github.com/tzorzan/path-server.git}. Clonare il \emph{branch master} in locale per ottenere una copia aggiornata del codice da eseguire.
+
+\section{Configurazione}
+Eseguire il \emph{restore} del database iniziale. Il file da cui eseguire il ripristino è presente nella posizione \emph{install/paths.backup} ed è in formato archivio. Eseguendo questa operazione si crea un database con la struttura corretta ed un set di dati di partenza. Il ripristino può essere eseguito tramite tool grafici o da linea di comando utilizzando le modalità previste da \emph{PostgreSQL} (\url{http://www.postgresql.org/docs/9.3/static/backup.html}).
+
+A questo punto è necessario istruire l'applicazione fornendo il puntamento al database da utilizzare. Questo può essere fatto impostando la variabile d'ambiente \emph{DATABASE\_URL} prima di avviare l'applicazione. Impostare il valore sostituendo i parametri necessari:
+\begin{verbatim}
+export DATABASE_URL=postgres://<utente>:<password>@<db_address>:<db_port>/<db_name>
+\end{verbatim}
+Impostare le credenziali di un utente che possiede diritti completi sullo schema, dato che alcune procedure richiedono la cancellazione e la creazione di alcune tabelle.
+
+Per installare le dipendenze (librerie \emph{Java}) necessarie all'esecuzione è necessario posizionarsi nella directory base del progetto e lanciare il comando:
+\begin{verbatim}
+play deps
+\end{verbatim}
+Saranno scaricate tutte le dipendenze necessarie e salvate nella cartella \emph{/lib} usata durante l'esecuzione del software.
+
+\section{Avvio}
+Avviare l'applicazione tramite il comando:
+\begin{verbatim}
+play run
+\end{verbatim}
+In questo modo si avvia il server e resta collegato al terminale in uso. 
+
+Per avviare in \emph{background} il servizio e quindi lasciare il server attivo usare i comandi di avvio e spegnimento:
+\begin{verbatim}
+play start
+play stop
+\end{verbatim}
+
+Il software utilizzerà come \emph{log} di sistema il file: \emph{/logs/system.out}.
+
+\section{Note}
+E' necessario riconfigurare i client mobile affinchè puntino al nuovo servizio server avviato. Questa operazione allo stato attuale può essere effettuata modificando il file sorgente \emph{/com/path3ar/model/Utilities.java} e rieseguendo packaging ed installazione dell'applicazione.
