@@ -1,6 +1,69 @@
-\section{Formato}
-Definizione e modifiche al formato di comunicazione.
+La funzione di ricezione dei campioni ha richiesto la definizione di una nuova \emph{API} di comunicazione con le applicazioni \emph{client} ed in seguito sviluppare le componenti di manipolazione dei dati ricevuti per la relativa persistenza. Si presentano le specifiche tecniche e di implementazione di questi elementi.
+
+\section{API}
+Nel definire il dettaglio delle chiamate necessarie all'invio dei dati, si è valutato di prediligere i criteri di semplicità e adeguamento alle tecnologie attuali. Si è quindi optato per una \emph{API HTTP} e contenuto in formato JSON. La chiamata da utilizzare per l'invio dei dati risponde alla seguente specifica:
+
+\begin{verbatim}
+POST /api/data
+
+BODY: 
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    <longitude>,
+                    <latitude>
+                ]
+            },
+            "id": <unique_id>,
+            "properties": {
+                "timestamp": <timestamp>,
+                "accuracy": <accuracy_value>,
+                "labels": {
+                    <label_name>: <label_value>,
+                    ...
+                }
+            }
+        },
+        ...
+    ],
+    "properties": {
+        "vote": <vote_number>
+    }
+}
+\end{verbatim}
+ Il formato definito consente di specificare una lista di elementi di campionamento e per ciascuno di esso le informazioni necessarie. Ogni campionamento è individuato da una chiave \emph{id} generata in modo randomico dal ciente seguendo lo standard UUID versione 4\footnote{\url{https://en.wikipedia.org/wiki/Universally_unique_identifier}}. Per ciascun campionamento sono indicati:
+\begin{itemize}
+	\item l'\emph{id} di riferimento;
+	\item le coordinate espresse in \emph{latitudine} e \emph{longitudine};
+	\item il dettaglio \emph{temporale} dell'avvenuto campionamento;
+	\item l'\emph{accuratezza} del rilevamento GPS così come fornita dal dispositivo;
+	\item le \emph{etichette} e i \emph{valori} per il campione rilevato dai sensori.
+\end{itemize}
+Tutti i valori sono numeri e stringhe in formato JSON. Per la struttura del contenuto si è preferito non adottare una forma libera ma piuttosto aderire ad uno standard già definito, ovvero GeoJSON\footnote{\url{http://geojson.org}}. In questo modo, pur consentendo una struttura semplice ed estendibile (il numero e il tipo di rilevazioni non è limitato), si è favorità l'inter-operabilità con altre librerie e servizi. Risulta inoltre più agevole una validazione del formato dei dati ricevuti.
+Per le chiamata non è stato previsto alcun protocollo di autenticazione del \emph{client}, ritenendolo non necessario in questa fase di sviluppo del progetto.
+
 \section{Implementazione}
-Modalità di implementazione e deserializzazione dei dati.
+Implemenazione semplificata dalle funzione del framework Play
+Classe conroller;
+Deserializzazione JSON
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{db-samples}
+  \caption{\footnotesize{Diagramma ER modello dati campionamenti.}}
+  \label{fig:paths-general}
+\end{figure}
+Persistenza JPA Model + schema ER
+
 \section{Esempi}
-Esempio di invio dal client e risultati ottenuti.
+Esempio invio campioni 
+Un esempio di contenuto della chiamata è presente all'indirizzo \url{http://path-server.herokuapp.com/public/stub/path-samples.json}.
+
+(screenshot map matching 1)
+(screensho pah graphs)
+Lista campioni
