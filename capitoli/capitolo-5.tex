@@ -1,4 +1,4 @@
-La funzione di ricezione dei campioni ha richiesto la definizione di una nuova \emph{API} di comunicazione con le applicazioni \emph{client} ed in seguito sviluppare le componenti di manipolazione dei dati ricevuti per la relativa persistenza. Si presentano le specifiche tecniche e di implementazione di questi elementi.
+La funzione di ricezione dei campioni ha richiesto la definizione di una nuova \emph{API} di comunicazione con le applicazioni \emph{client} ed in seguito lo sviluppo delle componenti di manipolazione dei dati ricevuti per la relativa persistenza. Si presentano le specifiche tecniche e di implementazione di questi elementi.
 
 \section{API}
 Nel definire il dettaglio delle chiamate necessarie all'invio dei dati, si è valutato di prediligere i criteri di semplicità e adeguamento alle tecnologie attuali. Si è quindi optato per una \emph{API HTTP} e contenuto in formato JSON. La chiamata da utilizzare per l'invio dei dati risponde alla seguente specifica:
@@ -48,8 +48,8 @@ Tutti i valori sono numeri e stringhe in formato JSON. Per la struttura del cont
 Per le chiamata non è stato previsto alcun protocollo di autenticazione del \emph{client}, ritenendolo non necessario in questa fase di sviluppo del progetto.
 
 \section{Implementazione}
-L'implementazione dei componenti server che gestiscono la chiamata è risultata agevolata dagli strumenti messi a disposizione dal framewrok selezionato. Per rispondere alla chiamata \emph{HTTP} si è sviluppata la classe Java ``Api'', la quale estende la classe ``play.Controller'' e quindi mappa sul metodo ``data()'' la gestione della richiesta.
-Il metodo implementato si occupa di deserializzare i dati della richiesta JSON, ricavando quindi le informazioni specifiche di ciascun campione. La deserializzazione avviene tramite la libreria \emph{Jackson} e le definizioni della struttura nella classi ``Feature'' e ``FeatureCollection''.
+L'implementazione dei componenti server che gestiscono la chiamata è risultata agevolata dagli strumenti messi a disposizione dal framewrok selezionato. Per rispondere alla chiamata \emph{HTTP} si è sviluppata la classe \texttt{Api.java}, la quale estende la classe \texttt{play.Controller} e quindi mappa sul metodo \texttt{data()} la gestione della richiesta.
+Il metodo implementato si occupa di deserializzare i dati della richiesta JSON, ricavando quindi le informazioni specifiche di ciascun campione. La deserializzazione avviene tramite la libreria \emph{Jackson} e le definizioni della struttura nella classi \texttt{Feature} e \texttt{FeatureCollection}.
 Una volta estratti i campi necessari, vengono utilizzati per ricreare gli oggetti di modello necessari alla persistenza. Per ciascun invio vengono quindi creati:
 \begin{itemize}
     \item \textbf{un} oggetto \textbf{Path} che rappresenta il pecorso inviato, lo identifica con un \emph{id} interno, tiene traccia della \emph{data} in cui è stato ricevuto e della \emph{valutazione} indicata dall'utente;
@@ -63,7 +63,7 @@ Una volta estratti i campi necessari, vengono utilizzati per ricreare gli oggett
   \caption{\footnotesize{Diagramma ER modello dati campionamenti.}}
   \label{fig:db-samples}
 \end{figure}
-La persistenza degli oggetti di modello è agevolata ancora una volta dagli strumenti di modello. Le classi estendono ``play.Model'' il quale fornisce i metodi di \emph{default} per il salvataggio a \emph{databse} tramite il metodo ``save()''. In questo modo non è necesarrio gestire manualmente nè lo schema della base dati nè l'implementazione specifica delle query. La funzione di ricerca degli oggetti di modello è fornita invece tramite il metodo di libreria ``find()'' e derivati.
+La persistenza degli oggetti di modello è agevolata ancora una volta dagli strumenti messi a disposizione dal framework \emph{Play!}. Le classi estendono \texttt{play.Model} il quale fornisce i metodi di \emph{default} per il salvataggio a \emph{database} tramite il metodo \texttt{save()}. In questo modo non è necessario gestire manualmente nè lo schema della base dati nè l'implementazione specifica delle \emph{query}. La funzione di ricerca degli oggetti di modello è fornita tramite il metodo di libreria \texttt{find()} e derivati.
 
 \section{Esempi}
 \begin{figure}[ht]
@@ -87,4 +87,4 @@ Un esempio di contenuto della chiamata è presente all'indirizzo \url{http://pat
   \caption{\footnotesize{Lista dei tracciati \emph{Path} ricevuti.}}
   \label{fig:sample-list}
 \end{figure}
-Il risultato ottenuto dall'invio di alcuni campionamenti al server può essere osservato in figura \ref{fig:sample-view}. Il server mette inoltre a disposizione una pagina di amministrazione che presenta la lista dei campionamenti ricevuti, le informazioni principali, e i link alla visualizzazione delle altre funzionalità (figura \ref{fig:sample-list}).
+Il risultato ottenuto dall'invio di alcuni campionamenti al server può essere osservato in figura \ref{fig:sample-view}. Il server mette inoltre a disposizione una pagina di amministrazione che presenta la lista dei traciati ricevuti, le informazioni principali, e i link alla visualizzazione delle altre funzionalità (figura \ref{fig:sample-list}).
