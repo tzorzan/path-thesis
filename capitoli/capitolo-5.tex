@@ -36,7 +36,7 @@ BODY:
     }
 }
 \end{verbatim}
- Il formato definito consente di specificare una lista di elementi di campionamento e per ciascuno di esso le informazioni necessarie. Ogni campionamento è individuato da una chiave \emph{id} generata in modo randomico dal ciente seguendo lo standard UUID versione 4\footnote{\url{https://en.wikipedia.org/wiki/Universally_unique_identifier}}. Per ciascun campionamento sono indicati:
+ Il formato definito consente di specificare una lista di elementi di campionamento e per ciascuno di esso le informazioni necessarie. Ogni campionamento è individuato da una chiave \emph{id} generata in modo casuale dal ciente seguendo lo standard UUID versione 4\footnote{\url{https://en.wikipedia.org/wiki/Universally_unique_identifier}}. Per ciascun campionamento sono indicati:
 \begin{itemize}
 	\item l'\emph{id} di riferimento;
 	\item le coordinate espresse in \emph{latitudine} e \emph{longitudine};
@@ -48,22 +48,43 @@ Tutti i valori sono numeri e stringhe in formato JSON. Per la struttura del cont
 Per le chiamata non è stato previsto alcun protocollo di autenticazione del \emph{client}, ritenendolo non necessario in questa fase di sviluppo del progetto.
 
 \section{Implementazione}
-Implemenazione semplificata dalle funzione del framework Play
-Classe conroller;
-Deserializzazione JSON
+L'implementazione dei componenti server che gestiscono la chiamata è risultata agevolata dagli strumenti messi a disposizione dal framewrok selezionato. Per rispondere alla chiamata \emph{HTTP} si è sviluppata la classe Java ``Api'', la quale estende la classe ``play.Controller'' e quindi mappa sul metodo ``data()'' la gestione della richiesta.
+Il metodo implementato si occupa di deserializzare i dati della richiesta JSON, ricavando quindi le informazioni specifiche di ciascun campione. La deserializzazione avviene tramite la libreria \emph{Jackson} e le definizioni della struttura nella classi ``Feature'' e ``FeatureCollection''.
+Una volta estratti i campi necessari, vengono utilizzati per ricreare gli oggetti di modello necessari alla persistenza. Per ciascun invio vengono quindi creati:
+\begin{itemize}
+    \item \textbf{un} oggetto \textbf{Path} che rappresenta il pecorso inviato, lo identifica con un \emph{id} interno, tiene traccia della \emph{data} in cui è stato ricevuto e della \emph{valutazione} indicata dall'utente;
+    \item \textbf{molteplici} oggetti \textbf{Sample}, uno per ciascun campionamento e quindi in relazione \emph{many to one} con l'oggetto \emph{Path}. Questo oggetto contiene tutte le informazioni relativa al campione (\emph{coordinate GPS}, \emph{accuratezza}, \emph{timestamp}, ...) più alcuni campi necessari alla successiva elaborazione (es. \emph{roadsegment\textunderscore id});
+    \item \textbf{molteplici} oggetti \textbf{Label}, uno per ciascuna tipologia di rilevamento effetuata. Anche questi oggeti sono in relazione \emph{many to one} con l'entità \emph{Sample}. Il valore delle etichette è di tipo numerico decimale.
+\end{itemize}
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\textwidth]{db-samples}
   \caption{\footnotesize{Diagramma ER modello dati campionamenti.}}
-  \label{fig:paths-general}
+  \label{fig:db-samples}
 \end{figure}
-Persistenza JPA Model + schema ER
+La persistenza degli oggetti di modello è agevolata ancora una volta dagli strumenti di modello. Le classi estendono ``play.Model'' il quale fornisce i metodi di \emph{default} per il salvataggio a \emph{databse} tramite il metodo ``save()''. In questo modo non è necesarrio gestire manualmente nè lo schema della base dati nè l'implementazione specifica delle query. La funzione di ricerca degli oggetti di modello è fornita invece tramite il metodo di libreria ``find()'' e derivati.
 
 \section{Esempi}
-Esempio invio campioni 
-Un esempio di contenuto della chiamata è presente all'indirizzo \url{http://path-server.herokuapp.com/public/stub/path-samples.json}.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{sample-geojson}
+  \caption{\footnotesize{Esempio di visualizzazione GeoJSON relativa ad un invio dati.}}
+  \label{fig:sample-geojson}
+\end{figure}
+Un esempio di contenuto della chiamata è presente all'indirizzo \url{http://path-server.herokuapp.com/public/stub/path-samples.json}. Tale esempio è stato utilizzato anche come traccia condivisa per l'implementazione dell'applicazione \emph{client}. La visualizzazione dei dati inviati può avvenire anche con strumenti esterni che interpretano il formato GeoJSON come presentato in figura \ref{fig:sample-geojson}.
 
-(screenshot map matching 1)
-(screensho pah graphs)
-Lista campioni
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{sample-view}
+  \caption{\footnotesize{Esempio di campionamento ricevuto dal server.}}
+  \label{fig:sample-view}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{sample-list}
+  \caption{\footnotesize{Lista dei tracciati \emph{Path} ricevuti.}}
+  \label{fig:sample-list}
+\end{figure}
+Il risultato ottenuto dall'invio di alcuni campionamenti al server può essere osservato in figura \ref{fig:sample-view}. Il server mette inoltre a disposizione una pagina di amministrazione che presenta la lista dei campionamenti ricevuti, le informazioni principali, e i link alla visualizzazione delle altre funzionalità (figura \ref{fig:sample-list}).
