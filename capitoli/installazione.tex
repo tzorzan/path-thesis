@@ -35,7 +35,8 @@ Eseguire il \emph{restore} del database iniziale. Il file da cui eseguire il rip
 
 A questo punto è necessario istruire l'applicazione fornendo il puntamento al database da utilizzare. Questo può essere fatto impostando la variabile d'ambiente \emph{DATABASE\_URL} prima di avviare l'applicazione. Impostare il valore sostituendo i parametri necessari:
 \begin{verbatim}
-export DATABASE_URL=postgres://<utente>:<password>@<db_address>:<db_port>/<db_name>
+export \
+DATABASE_URL=postgres://<user>:<pwd>@<address>:<port>/<db_name>
 \end{verbatim}
 Impostare le credenziali di un utente che possiede diritti completi sullo schema, dato che alcune procedure richiedono la cancellazione e la creazione di alcune tabelle.
 

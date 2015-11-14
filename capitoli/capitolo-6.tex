@@ -16,18 +16,51 @@ Google fornisce \emph{API} e \emph{SDK} per le principali piattaforme applicativ
 
 La prima caratteristica per cui si contraddistingue il servizio Google Maps è che non consente l'accesso diretto alle informazioni cartografiche. Non è possibile estrapolare parte di questi dati, siano essi in forma grezza o finita. Da qui la necessità di utilizzare uno dei servizi a disposizione per ottenere le informazioni necessarie, in particolare il servizio \textbf{Google Maps Direction API}. Con tale servizio è possibile ottenere un percorso impostando un punto di partenza ed una destinazione. Lo stesso servizio era utilizzato in precedenza dal progetto \emph{Path 2.0} e veniva impiegato direttamente per il calcolo della soluzione finale da proporre agli utenti. Tuttavia questo tipo di accesso non consente di ottenere dati per una determinata zona se non con una precisa interrogazione. Inoltre l'utilizzo delle \emph{API} presenta i seguenti limiti:
 \begin{itemize}
-\item il numero di interrogazioni è limitato dal tipo di piano utilizzato. Il servizio libero e gratuito denominato \emph{Standard} consente 2,500 chiamate al giorno, applicando una tariffa per le successive. Questa situazione sarebbe stata sostenibile per le prime fasi prototipali del progetto, ma non per una sua applicazione su larga scala.
-\item il piano di utilizzo \emph{Standard} limita anche l'utilizzo della funzione ``waypoint'' nel calcolo del percorso ad 8 tappe intermedie. Questo risulterebbe un ulteriore limite nel calcolo dei percorsi complessi;
-\item il servizio Maps opera direttamente sui dati memorizzati da Google ma non è possibile aumentare o integrare direttamente questo insieme di dati. Non è possibile quindi sfruttare gli algoritmi forniti dal servizio (es. calcolo percorso) su un insieme di informazioni \emph{custom} (es. i campioni di luminosità), se non tramite un uso indiretto e improprio delle \emph{API}.
+  \item il numero di interrogazioni è limitato dal tipo di piano utilizzato. Il servizio libero e gratuito denominato \emph{Standard} consente 2,500 chiamate al giorno, applicando una tariffa per le successive. Questa situazione sarebbe stata sostenibile per le prime fasi prototipali del progetto, ma non per una sua applicazione su larga scala.
+  \item il piano di utilizzo \emph{Standard} limita anche l'utilizzo della funzione ``waypoint'' nel calcolo del percorso ad 8 tappe intermedie. Questo risulterebbe un ulteriore limite nel calcolo dei percorsi complessi;
+  \item il servizio Maps opera direttamente sui dati memorizzati da Google ma non è possibile aumentare o integrare direttamente questo insieme di dati. Non è possibile quindi sfruttare gli algoritmi forniti dal servizio (es. calcolo percorso) su un insieme di informazioni \emph{custom} (es. i campioni di luminosità), se non tramite un uso indiretto e improprio delle \emph{API}.
 \end{itemize}
 Alla data in cui si è eseguita l'analisi comparativa, i servizi \emph{Google Maps} non disponevano ancora delle \emph{Roads API} introdotte in forma sperimentale nel Marzo 2015. La funzione di interpolazione e mapping dei punti GPS sarebbe risultata molto utile all'applicazione del progetto ma per questo motivo non è stata considerata.
 
-\subsection{Open Street Map}
-Caratteristiche Open Street Map.
+\subsection{OpenStreetMap}
+Le mappe \emph{OpenStreetMap} (\url{http://www.openstreetmap.org}) sono il risultato di un progetto collaborativo nato nel 2004. Le informazioni cartografiche sono raccolte e corrette liberamente dai contributori al progetto la cui direzione e coordinamento sono seguiti dalla fondazione non a scopo di lucro \emph{OpenStreetMap Foundation}. Il progetto ha ormai una copertura a livello mondiale alla quale hanno contribuito sia organizzazioni governative che private tra cui ricordiamo Yahoo (2006) con le proprie ortofoto aree, l'Automotive Navigation Data (2007) con il database stradale di Paesi bassi, India e Cina ed infine l'inclusione del database stradale TIGER (2007) con le informazioni stradali degli Stati Uniti. Nel 2009 il progetto ha superato la quota dei 100.000 utenti iscritti. La caratteristica più importante dei dati \emph{OpenStreetMap} è la modalità con cui sono diffusi, ovvero coperti dalla licenza \emph{Open Database License} la quale consente un uso libero dei dati anche per prodotti derivati, purchè ne sia sempre citata la fonte originale.
+Considerate le caratteristiche di libero accesso e riutilizzo, nonchè la completezza e precisione dei dati stessi, la soluzione OpenStreetMap si è candidata da subito come la soluzione ideale per l'implementazione del server \emph{PathS}. Tuttavia le modalità tecniche con cui accedere e manipolare i dati non erano immediate. Le opzioni principali offerte agli sviluppatori per consultare i dati \emph{OSM} sono (\url{http://wiki.openstreetmap.org/wiki/Develop}):
+\begin{itemize}
+  \item \textbf{API} (\url{http://wiki.openstreetmap.org/wiki/API_v0.6}): consentono di interrogare i dati \emph{OSM} tramite chiamate \emph{HTTP REST} e formato delle risposte \emph{XML}. Sono chiamate riservate agli \emph{editor} e non consentono di eseguire query per ampie porzioni (superiori a $0.25\deg$ quadrati).    
+  \item \textbf{\emph{dump} dei dati}: ovvero estrazioni dei dati \emph{OSM} in formato \emph{XML} o come database, aggiornate in modo costante. Le estrazioni complete tuttavia hanno un volume difficilmente gestibile ($45GByte$ in formato compresso) e risulta comunque difficile accedere ad estrazioni parziali con strumenti alternativi come le API estese (\url{http://wiki.openstreetmap.org/wiki/Xapi}). 
+\end{itemize}
+Entrambe le opzioni non si presentano particolarmente agevoli per le esigenze del progetto, tuttavia grazie alle caratteristiche degli \emph{open data}, è stato possibile trovare delle valide alternative che, pur basandosi sui dati \emph{OSM}, fornisco modalità di integrazione più idonee al progetto.
+
 \subsubsection{Overpass API}
-Il servizio di interrogazione \emph{Overpass API}, funzionalità e tipo di \emph{query} implementata.
+Il servizio di interrogazione \emph{Overpass API} è uno strumento di introduzione recente che si è aggiunto come alternativa di consultazione in sola lettura dei dati \emph{OpenStreetMap}. Il suo scopo è quello di agire come un ``\emph{database over the web}'' che può essere interrogato in modo efficiente tramite un linguaggio specifico (\url{http://wiki.openstreetmap.org/wiki/Overpass_API}). Un client può quindi eseguire una chiamata API comunicando la \emph{query} da eseguire e in breve ottenere una risposta che raccoglie anche migliaia di elementi geografici. Il servizio è erogato liberamente e senza limitazione da infrastrutture di servizi terzi (es. \url{http://overpass-api.de}). Sono presenti inoltre strumenti on-line (ad esempio: \url{http://overpass-turbo.eu}) i quali asssitono lo sviluppo e testano l'esecuzione delle interrogazioni scritte nel formato specifico \emph{Overpass Query Language}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{overpass}
+  \caption{\footnotesize{Esempio di interrogazione tramite \emph{Overpass API}.}}
+  \label{fig:overpass}
+\end{figure}
+
+Le funzionalità offerte da questa soluzione sono state valutate come ottimali nell'ambito del progetto \emph{PathS} server in quanto:
+\begin{itemize}
+\item sono uno strumento specificatamente sviluppato per l'integrazione lato server (\emph{webservice});
+\item dispongono di sufficiente documentazione e strumenti di supporto allo sviluppo;
+\item consentono di interrogare in modo parziale i dati cartografici \emph{OpenStreetMap} per la sola porzione di interesse (ad esempio il singolo percorso analizzato);
+\item non impongono nessun tipo di limitazione in termini di numero o estensione delle interrogazioni.
+\end{itemize}
+
+Si è quindi studiata una \emph{query} specifica per interrogare il servizio ed ottenere i dati necessari al contesto delle elaborazioni \emph{PathS}. Per un determinato percorso o insieme di campioni ricevuti dal \emph{client}, era necessario ricavare tutti i possibili percorsi pedonali che potevano essere coinvolti. La soluzione ottenuta esegue quindi queste due operazioni:
+\begin{itemize}
+\item limita con una \emph{bounding box} la zona in cui eseguire l'interrogazione, ricavandola dai punti più estremi del campionamento;
+\item estrae tutti i possibili elementi geografici che possono essere considerati percorsi pedonali (strade, passerelle, ponti, sentieri, etc.)
+\end{itemize}
+Nell'implementazione del server sono stati sviluppate alcune classi di utilità che agevolano l'interrogazione e la gestione delle risposte al servizio Overpass e sono rispettivamente: \texttt{app.\-utils.\-OverpassQuery.java} e \texttt{app.\-models.\-boundaries.\-OverpassResponse.java}.
+
 \subsubsection{Mapquest}
-Servizi Mapquest (geocoding, routing, etc.)
+Oltre al servizio di inerrogazione dei dati \emph{OpenStreetMap} si è ritenuto opportuno identificare anche un servizio di \emph{routing} che operasse sugli stessi dati, interrogabile tramite \emph{webservices} dalla componente server. Sebbene questa funzione non sia indispensabile, è risultata molto utile in fase di sviluppo e come verifica del funzionamento degli algoritmi. Il servizio è inoltre utilizzata come risposta di \emph{fallback} nel caso non vi siano dati disponibili da fornire ai \emph{client}.
+
+La soluzione individuata è quella fornita da \emph{MapQuest} (\url{https://developer.mapquest.com}). Come per gli altri servizi, le interrogazioni avvengono tramite \emph{API HTTP} in formato \emph{JSON} e quindi gestite da alcune classi \emph{Java} di supporto per l'interrogazione (\texttt{app.\-utils.\-MapQuestQuery.java}) e l'interpretazione (\texttt{app.\-models.\-boundaries.\-MapQuestResponse.java}).
+
 
 \section{Persistenza ed eleaborazione dei dati GIS}
 Libreria scelta per la persistenza dei dati PostGIS, modello dati del DB e tipi utilizzati. Operazioni di interrogazione supportate dall'estensione del database.
