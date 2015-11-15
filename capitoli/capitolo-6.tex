@@ -103,10 +103,71 @@ Gli algoritmi di entrambe le categorie possono essere ulteriormente categorizzat
 Indipendentemente dall'algoritmo utilizzato, i risultati dipendono molto dall'accuratezza della risoluzione della mappa: più alta è la definizione, migliori saranno i risultati ottenuti. Spesso gli algoritmi presuppongono che le informazioni sulla rete di trasporto siano corrette e complete. Così è anche nel progetto \emph{PathS} in cui si assume come insieme completo i dati estratti da \emph{OpenStreetMap} e i campioni vengono associati a quei percorsi. In altre situazioni tuttavia è anche possibile utilizzare gli algoritmi di \emph{Map Maptching} per l'operazione inversa, ovvero migliorare la risoluzione o estendere la rete di trasporto a partire dai rilevamenti di un oggetto in movimento. Questo aspetto non è stato considerato in questa fase di progetto ma solo come possibile evoluzione.
 
 \subsection{ST-MapMatching}
-Esposizione delle caratteristiche principali dell'algoritmo come presentato in \cite{stmapmatching}.
+Per l'applicazione al progetto \emph{PathS} è stato necessario individuare un algoritmo di \emph{Map Matching} che consentisse l'associazione dei rilevamenti di rumore e luminosità ai tratti di percorso delle mappe \emph{OpenStreetMap}. L'utilizzo di un algoritmo di tipo \emph{offline} è lecito, dato che l'elaborazione dei percorsi può avvenire dopo il loro invio alla componente \emph{server} e in quel caso tutti i rilevamenti sono stati eseguiti. Inoltre l'operazione non è direttamente collegata ad una interrogazione dell'utente ma piuttoto ad un processo \emph{batch} di elaborazione del server, il quale può tollerare anche una alta complessità computazionale e tempi di elaborazione lunghi.
+
+Tra le alternative disponibili in letteratura, si è optato per una opzione che fosse relativamente semplice da implementare e al tempo stesso garantisse dei risultati qualitativamente accettabili. Un algoritmo di tipo esclusivamente geometrico ad esempio non sarebbe stato utile, dato che non tiene conto delle caratteristiche di sequenzialità dei percorsi pedonali che andiamo a trattare e potrebbe portare ad associazioni non corrette.
+
+Un buon compromesso individuato è l'algoritmo \textbf{\emph{Spatio Temporal Map Matching} (ST Matching)} \cite{stmapmatching}. Nella soluzione si considerano sia le caratteristiche spaziali e topoligiche della rete di trasporto che i vincoli temporali e di velocità della traiettoria. L'algoritmo si compone principalmente di tre passaggi [\ref{fig:st-mapmatching}] in cui:
+\begin{itemize}
+	\item si analizzano i dati GPS e la rete di trasporto per l'identificazione dei possibili candidati;
+	\item si valutano singolarmente i candidati tramite considerazioni spazio-temporali;
+	\item si determina il \emph{matching} ottimale con il supporto di un grafo dei candidati.
+\end{itemize}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{st-mapmatching}
+  \caption{\footnotesize{Schema dei passi previsti dall'algoritmo \emph{ST Matching}.}}
+  \label{fig:st-mapmatching}
+\end{figure}
+Le caratteristiche dell'algoritmo fanno si che possano ottenere dei risultati in linea con le aspettative in termini di errore di precisione e al tempo stesso delle \emph{performance} accettabili. 
+
+Si presenta l'implemenazione di dettaglio così come è stata eseguita per ciascun passo previsto dall'algoritmo.
+
 \subsection{Pre-elaborazione del percorso - step 1}
-Calcolo della bounding box, recupero della rete di trasporto coinvolta e inserimento a sistema.
+Il primo passo consiste nell'identificare tutti i possibili elementi della rete di trasporto che possono essere coinvolti dal percorso che si sta elaborando.
+
+La prima operazione è quindi quella di calcolare una \emph{bounding box} in grado di contenere tutti i campioni del pecorso. Il calcolo avviene sfruttando le librerie \emph{PostGIS} e una \emph{query} opportunamente sviluppata per selezionare le cooordinate massime e minime di latitudine e longitudine per tutti i campioni GPS del percorso. I valori vengono ulteriormente allargati di un valore fisso (20 metri) per assicurarsi di coprire un'area sufficientemente estesa al netto degli errori di accuratezza.
+
+La stessa \emph{bounding box} viene quindi utilizzata per l'interorgazione dei dati tramite \emph{OverpassAPI} e quindi si ottengono tutti i tratti della rete di trasporto possibilmente coinvolti nel percorso. Le informazioni vengono quindi inserite a database nella tabella \texttt{RoadSegment} e gestite tramite la classe di modello \texttt{app.\-models.\-RoadSegment.java}. I segmenti già presenti a sistema non vengono duplicati. 
+
+Le operazioni citate sono implementate nel metodo \texttt{doStep1()} della classe \texttt{app.\-controllers.\-MaMatching.java} e il risultato della pre-elaborazione può essere visulazzato tramite l'apposita interfaccia del server (figura \ref{fig:st-mapmatching-step1}). La \emph{bounding box} è rappresentata in arancione, mentre tutti i segmenti verdi sono gli elementi elaborati e aggiunti a sistema.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.8\textwidth]{st-mapmatching-step1}
+  \caption{\footnotesize{Risultato dell'esecuzione \emph{step} 1 dell'algoritmo \emph{ST Matching}.}}
+  \label{fig:st-mapmatching-step1}
+\end{figure}
+
 \subsection{Identificazione dei candidati - step 2}
-Definizione e modalità di calcolo dei candidati. Operazioni implementate ed esempi di esecuzione.
+Il passo successivo dell'algoritmo è l'individuazione, per ciascun campione, dei possibili candidati. Per ciascuna posizione GPS, la quale potrebbe non appartenere alla rete di trasporto, si ricercano le possibili corrispondenze. Data quindi la traiettoria $T=p_1 \rightarrow p_2 \rightarrow ... p_n$ si ricava per ciascun punto $p_i, 1 <= i <= n$ i possibili segmenti candidati in un raggio $r$. Tale operazione è implementata con una \emph{query GIS} e la funzione \texttt{ST\_DWithin}. La distanza utilizzata per la selezione dei segmenti da considerare è stata impostata sperimentalmente alla misura di 20 metri. 
+
+Per ciascun segmento vengono quindi calcolati i \textbf{punti candidati} calcolando la \emph{Line Segment Projection}. La \emph{Line Segment Projection} di un punto $p$ rispetto ad un segmento di rete di trasprot $e$ è definita come il punto $c$ appartenente ad $e$ tale per cui $c=arg\, min_{\forall c_i \in e} dist(c_i, p)$ dove $dist(c_i, p)$ ritorna la distanza di ciascun punto $c_i$ su $e$. [\ref{fig:st-mapmatching-candidates}]
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.3\textwidth]{st-mapmatching-candidates}
+  \caption{\footnotesize{Calcolo dei candidati di un punto con il metodo \emph{Line Segment Projection}.}}
+  \label{fig:st-mapmatching-candidates}
+\end{figure}
+
+L'implementazione del calcolo è risultato relativamente agevole tramite la funzione \texttt{ST\_ClosestPoint(geometry, geometry)} fornita dalla libreria \emph{PostGIS}. In questo modo per ciacun punto sono state ricavate le coordinate delle proiezioni sui segmenti adiacenti e quindi possibili candidati per il \emph{matching}. I punti ottenuti sono salvati a database tramite la classe di modello \texttt{CandidatePoint}. Il risultato di questo calcolo è visualizzabile per ciascun elemento nell'interfaccia di amministrazione del server tramite i collegamenti allo \emph{step 2} (figura \ref{fig:st-mapmatching-step2}). Il punto del campionamento è indicato in colore blu mentre sono segnalate con cerchi arancioni le posizioni dei punti candidati.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.8\textwidth]{st-mapmatching-step2}
+  \caption{\footnotesize{Risultato dell'esecuzione \emph{step} 2 dell'algoritmo \emph{ST Matching}.}}
+  \label{fig:st-mapmatching-step2}
+\end{figure}
+
+Una volta individuato l'insieme dei candidati per ciascuna posizione di campionamento della traiettoria $T$, il problema si riduce a scegliere da ciascun insieme un solo elemento tale per cui: $P: c_1^j1 \rightarrow c_2^j2 \rightarrow ... c_n^jn$ è l'assegnazione ottima per $T=p_1 \rightarrow p_2 \rightarrow ... p_n$.
+
 \subsection{Valutazione e selezione dei candidati - step 3}
-Applicazione della valutazione spazio-temporale dei campioni. Algoritmo di selezione dei candidati da assegnare ai campioni. 
+Ciascun candidato viene quindi valutato considerando due aspetti:
+\begin{itemize}
+  \item analisi spaziale
+  \item analisi temporale
+\end{itemize}
+
+
+Algoritmo di selezione dei candidati da assegnare ai campioni. (matching ottimo) 
