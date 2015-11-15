@@ -23,13 +23,13 @@ La prima caratteristica per cui si contraddistingue il servizio Google Maps è c
 Alla data in cui si è eseguita l'analisi comparativa, i servizi \emph{Google Maps} non disponevano ancora delle \emph{Roads API} introdotte in forma sperimentale nel Marzo 2015. La funzione di interpolazione e mapping dei punti GPS sarebbe risultata molto utile all'applicazione del progetto ma per questo motivo non è stata considerata.
 
 \subsection{OpenStreetMap}
-Le mappe \emph{OpenStreetMap} (\url{http://www.openstreetmap.org}) sono il risultato di un progetto collaborativo nato nel 2004. Le informazioni cartografiche sono raccolte e corrette liberamente dai contributori al progetto la cui direzione e coordinamento sono seguiti dalla fondazione non a scopo di lucro \emph{OpenStreetMap Foundation}. Il progetto ha ormai una copertura a livello mondiale alla quale hanno contribuito sia organizzazioni governative che private tra cui ricordiamo Yahoo (2006) con le proprie ortofoto aree, l'Automotive Navigation Data (2007) con il database stradale di Paesi bassi, India e Cina ed infine l'inclusione del database stradale TIGER (2007) con le informazioni stradali degli Stati Uniti. Nel 2009 il progetto ha superato la quota dei 100.000 utenti iscritti. La caratteristica più importante dei dati \emph{OpenStreetMap} è la modalità con cui sono diffusi, ovvero coperti dalla licenza \emph{Open Database License} la quale consente un uso libero dei dati anche per prodotti derivati, purchè ne sia sempre citata la fonte originale.
+Le mappe \emph{OpenStreetMap} (\url{http://www.openstreetmap.org}) sono il risultato di un progetto collaborativo nato nel 2004. Le informazioni cartografiche sono raccolte e corrette liberamente dai contributori la cui direzione e coordinamento sono seguiti dalla fondazione non a scopo di lucro \emph{OpenStreetMap Foundation}. Il progetto ha ormai una copertura a livello mondiale alla quale hanno contribuito sia organizzazioni governative che private tra cui ricordiamo Yahoo (2006) con le proprie ortofoto aree, l'Automotive Navigation Data (2007) con il database stradale di Paesi bassi, India e Cina ed infine l'inclusione del database stradale TIGER (2007) con le informazioni stradali degli Stati Uniti. Nel 2009 il progetto ha superato la quota dei 100.000 utenti iscritti. La caratteristica più importante dei dati \emph{OpenStreetMap} è la modalità con cui sono diffusi, ovvero coperti dalla licenza \emph{Open Database License} la quale consente un uso libero dei dati anche per prodotti derivati, purchè ne sia sempre citata la fonte originale.
 Considerate le caratteristiche di libero accesso e riutilizzo, nonchè la completezza e precisione dei dati stessi, la soluzione OpenStreetMap si è candidata da subito come la soluzione ideale per l'implementazione del server \emph{PathS}. Tuttavia le modalità tecniche con cui accedere e manipolare i dati non erano immediate. Le opzioni principali offerte agli sviluppatori per consultare i dati \emph{OSM} sono (\url{http://wiki.openstreetmap.org/wiki/Develop}):
 \begin{itemize}
   \item \textbf{API} (\url{http://wiki.openstreetmap.org/wiki/API_v0.6}): consentono di interrogare i dati \emph{OSM} tramite chiamate \emph{HTTP REST} e formato delle risposte \emph{XML}. Sono chiamate riservate agli \emph{editor} e non consentono di eseguire query per ampie porzioni (superiori a $0.25\deg$ quadrati).    
   \item \textbf{\emph{dump} dei dati}: ovvero estrazioni dei dati \emph{OSM} in formato \emph{XML} o come database, aggiornate in modo costante. Le estrazioni complete tuttavia hanno un volume difficilmente gestibile ($45GByte$ in formato compresso) e risulta comunque difficile accedere ad estrazioni parziali con strumenti alternativi come le API estese (\url{http://wiki.openstreetmap.org/wiki/Xapi}). 
 \end{itemize}
-Entrambe le opzioni non si presentano particolarmente agevoli per le esigenze del progetto, tuttavia grazie alle caratteristiche degli \emph{open data}, è stato possibile trovare delle valide alternative che, pur basandosi sui dati \emph{OSM}, fornisco modalità di integrazione più idonee al progetto.
+Entrambe le opzioni non si presentano particolarmente agevoli per le esigenze del progetto, tuttavia grazie alle caratteristiche degli \emph{open data}, è stato possibile trovare delle valide alternative che, pur basandosi sui dati \emph{OSM}, fornisco modalità di integrazione più idonee al contesto.
 
 \subsubsection{Overpass API}
 Il servizio di interrogazione \emph{Overpass API} è uno strumento di introduzione recente che si è aggiunto come alternativa di consultazione in sola lettura dei dati \emph{OpenStreetMap}. Il suo scopo è quello di agire come un ``\emph{database over the web}'' che può essere interrogato in modo efficiente tramite un linguaggio specifico (\url{http://wiki.openstreetmap.org/wiki/Overpass_API}). Un client può quindi eseguire una chiamata API comunicando la \emph{query} da eseguire e in breve ottenere una risposta che raccoglie anche migliaia di elementi geografici. Il servizio è erogato liberamente e senza limitazione da infrastrutture di servizi terzi (es. \url{http://overpass-api.de}). Sono presenti inoltre strumenti on-line (ad esempio: \url{http://overpass-turbo.eu}) i quali asssitono lo sviluppo e testano l'esecuzione delle interrogazioni scritte nel formato specifico \emph{Overpass Query Language}.
@@ -63,11 +63,45 @@ La soluzione individuata è quella fornita da \emph{MapQuest} (\url{https://deve
 
 
 \section{Persistenza ed eleaborazione dei dati GIS}
-Libreria scelta per la persistenza dei dati PostGIS, modello dati del DB e tipi utilizzati. Operazioni di interrogazione supportate dall'estensione del database.
-Libreria scelta per la manipolazione dei dati in ambiente \emph{JAVA}:\emph{JTS}. Operazioni necessarie ed esempi di utilizzo. 
+Una delle esigenze che si presenta nello sviluppo del server \emph{PathS} è la persistenza e l'interrogazione di dati di tipo geografico. Ad esempio può essere necessario salvare le coordinate di cui si compone un percorso pedonale o ricercare tutti gli elementi salvati entro una certa distanza da una posizione nota. Per eseguire questo tipo di operazioni in modo agevole ed efficiente, è stata adottata la libreria \textbf{\emph{PostGIS}} (\url{http://postgis.net}).
+
+Questa libreria si propone come estensione del database \emph{PostgreSQL} aggiungendo alcuni elementi fondamentali, tra cui:
+\begin{itemize}
+\item tipi di dato geometrico e geografico (ad esempio punti, linee spezzate, poligoni);
+\item funzioni ed operatori di manipolazione dei dati geometrici (intersezione, unione, calcolo distanza, proiezione, etc.);
+\item indici ed ottimizzazioni per la gestione dei dati spaziali.
+\end{itemize}
+Le operazioni sui dati spaziali sono acessibili come funzioni e primitive del linguaggio \emph{SQL} utilizzato per interrogare il \emph{database}. L'utilizzo di questa libreria ha consentito di implementare agevolmente le operazioni richieste dagli algoritmi e di garantire già una prima forma di ottimizzazione e accesso intelligente ai dati salvati, caratteristica non banale nel caso si fosse dovuta ri-sviluppare da zero.
+
+Di pari passo all'odozione della libreria per il \emph{database}, si è valutata anche l'adozione di uno strumento per l'ambiente \emph{Java} il quale fornisse la rappresentazione base dei tipi geometrici le operazioni basilari su di essi. La soluzione individuata è stata la libreria \textbf{\emph{JTS}} (\url{http://www.vividsolutions.com/jts/JTSHome.htm}) la quale tramite il \emph{package} \texttt{com.\-vividsolutions.\-jts} fornisce una gerarchia di classi e operatoazioni per la rappresentazione e manipolazione di dati spaziali 2D. L'implementazione è in puro linguaggio \emph{Java} e quindi si integra facilmente nel contesto software del server.
+
 
 \section{Algoritmo di Map Matching}
-Perchè è necessario eseguire una operazione di \emph{map matching}. A cosa servono questo tipo di algoritmi, panoramica sullo stato dell'arte e le soluzioni possibili.
+L'ambito a cui si applica il progetto \emph{PathS} prevede la raccolta di campioni da dispositivi che non si muovono liberamnte nello spazio ma piuttosto che seguono dei percorsi predefiniti ovvero la rete stradale e pedonale. Ottenuto un insieme di rilevamenti e le relative coordinate GPS è necessario quindi associare queste informazioni a quella che viene definita rete di trasporto. Questa associazione consente, oltre ad aumentare il contenuto informativo della base dati, ad un miglioramento e correzione dei dati relativi ai campioni, dato che o per errori nella rilevazione o per differenza di rappresentazione le coordinate potrebbero non corrispondere. 
+
+L'operazione può essere eseguita tramite l'utilizzo di una famiglia di algoritmi denominati di \emph{Map Matching} \cite[capitolo~3.3.1]{mdme}. Tali algoritmi sono una funzione che associa a ciascuna rilevazione di un oggetto in movimento la corrispondente posizione nella rete di trasporto. 
+Le tecniche di questo tipo si suddividono in due approcci:
+\begin{itemize}
+\item \textbf{\emph{online}}: quando i rilevamenti sono disponibili progressivamente con la loro acquisizione e spesso si applicano a contesti \emph{real-time} in cui risulta critica la velocità di risposta e i dati che si elaborano riguardano solo la situazione corrente e passata;
+\item \textbf{\emph{offline}}: quando l'esecuzione dell'algoritmo può essere rimandata ad un momento successivo in cui tutte le rilevazioni sono disponibili e i vincoli temporali non sono così forti. Solitamente queste situazioni di post-processamento conducono a risultati qualitativamente migliori. 
+\end{itemize}
+
+Gli algoritmi di entrambe le categorie possono essere ulteriormente categorizzati sulla base della strategia che implementano in:
+\begin{itemize}
+\item \textbf{geometrici}: quando si considerano unicamente le caratteristiche geometriche dei segmenti della rete di trasporto. Alcuni esempi di questa tecnica sono gli algoritmi \emph{point-to-point}, \emph{point-to-segment} o \emph{curve-to-curve} in cui l'oggetto in movimento viene associato calcolando diversi tipi di distanza (Euclidea, perpendicolare, Fréchet).
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.5\textwidth]{geometric-mapmatching}
+  \caption{\footnotesize{Esempio d algoritmi di \emph{Map Matching} geometrico.}}
+  \label{fig:geometric-mapmatching}
+\end{figure}
+\item \textbf{topologici}: quando oltre alle caratteristiche geometriche si considera anche la topologia della rete di trasporto con le possibili adiacenze e connessioni tra i vari segmenti. Generalmente questo tipo di approccio fornisce risultati migliori rispetto a quello eclusivamente geometrico ma è suscettibile di errori soprattuto in presenza di \emph{outlier}. In questa categoria non si considerano le informazioni aggiuntive come velocità e direzione del movimento. 
+\item \textbf{probabilistici}: sono algoritmi che sfruttano una regione di errore, tipicamente di forma ellittica, la cui dimensione dipende dalla velocità di spostamento. Quest'area viene utilizzata per una selezione dei possibili \emph{match} in particolare nelle zone di congiunzione. La scelta finale viene eseguita considerando direzione e velocità dello spostamento, nonchè le caratteristiche di connessione degli elementi della rete.
+\item \textbf{ibridi}: sono gli algoritmi che uniscono gli approcci precedenti in soluzioni particolarmente intelligenti in cui la combinazione dei vari criteri consente di eseguire scelte più accurate. Questi algoritmi inoltre possono fare uso di informazioni da sistemi terzi come ad esempio l'\emph{Assisted GPS}.
+\end{itemize}
+
+Indipendentemente dall'algoritmo utilizzato, i risultati dipendono molto dall'accuratezza della risoluzione della mappa: più alta è la definizione, migliori saranno i risultati ottenuti. Spesso gli algoritmi presuppongono che le informazioni sulla rete di trasporto siano corrette e complete. Così è anche nel progetto \emph{PathS} in cui si assume come insieme completo i dati estratti da \emph{OpenStreetMap} e i campioni vengono associati a quei percorsi. In altre situazioni tuttavia è anche possibile utilizzare gli algoritmi di \emph{Map Maptching} per l'operazione inversa, ovvero migliorare la risoluzione o estendere la rete di trasporto a partire dai rilevamenti di un oggetto in movimento. Questo aspetto non è stato considerato in questa fase di progetto ma solo come possibile evoluzione.
+
 \subsection{ST-MapMatching}
 Esposizione delle caratteristiche principali dell'algoritmo come presentato in \cite{stmapmatching}.
 \subsection{Pre-elaborazione del percorso - step 1}
