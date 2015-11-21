@@ -1,11 +1,28 @@
 \section{Risultati}
+
 Risultato complessivo del progetto. Funzionamento end-to-end con screenshot ed esempi.
+WIP
+
 \section{Miglioramenti ed Evoluzioni}
-Limiti e compromessi dell'attuale implementazione. Aree di miglioramento ed evoluzione, tra cui:
-\begin{itemize}
-\item sistema di gerazione dati di test e verifica automatica;
-\item suddivisione ulteriore dei tratti di percorso;
-\item alternative algoritmi di map-matching;
-\item altri algoritmi di routing;
-\item servizi aggiuntivi al routing (analisi dei posti più frequentati, funzioni ``get-together'' e \emph{social oriented}).
-\end{itemize}
+Già nella fase di sviluppo sono stati individuate alcune possibili aree di miglioramento, vengono presentate in seguito come spunto per possibili attività in futuro.
+\subsubsection{Sistema di generazione di dati di test e procedura automatica di verifica}
+Così come presentato nel \ref[capitolo 4]{} 
+WIP
+
+\subsubsection{Strategia di suddivisione segmenti}
+Nell'implementazione attuale non viene applicato nessun intervento in termini di suddivisione dei segmenti.
+WIP
+
+\subsubsection{Algoritmi di map-matching}
+Le attività del progetto si sono focalizzate nell'implementazione di un singolo algoritmo di \emph{Map matching} alo scopo di ottenere una soluzione funzionante. Può essere interessante riprendere l'analisi sulle possibili alternative presenti in letteratura e implementare degli algoritmi alternativi. L'applicazione tramite un sistema automatico di generazione dei dati e di test potrebbe quindi portare ad una comparativa tra i vari algoritmi e ad individuare un'implementazione che si adatti in modo migliore al contesto dei campioni raccolti.
+
+\subsubsection{Algoritmi di routing}
+Un ragionamento analogo al precedente può essere applicato alla selezione ed implementazione degli algoritmi di \emph{routing}. 
+
+In una fase del progetto si è pensato di implementare questa componente da zero, applicando una soluzione di programmazione dinamica per \emph{Shortest Path Problem with Resource Constraints} (\emph{SPPRC}), sulla base dei lavori \cite[Desrochers e Soumis]{labelling} e successivi \cite[capitolo 4.4]{spprc}. 
+
+Per difficoltà implementative, si è poi optato per la soluzione tramite l'utilizzo della libreria \emph{PGRouting}. La realizzazione di alcune alternative, possibilmente basate su algoritmi diversi, anche in questo caso potrebbe portare alle selezione di un prodotto che presenti caratteristiche migliori in termini di qualità dei risultati forniti o di complessità.
+
+\subsubsection{Altri servizi}
+servizi aggiuntivi al routing (analisi dei posti più frequentati, funzioni ``get-together'' e \emph{social oriented}).
+WIP
