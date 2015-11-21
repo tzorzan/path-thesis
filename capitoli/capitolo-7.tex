@@ -39,7 +39,7 @@ Eseguite le operazioni di pre-processamento, i dati a sistema sono nella forma c
 \section{Percorsi calcolati}
 \subsection{Shortest Path}
 La prima tipologia di percorso che si è deciso di calcolare è stato il caso semplice del percorso più breve (\emph{Shortest Path}). In questo modo è stato possibile valutare l'effettiva funzionalità della libreria e correggere eventuali errori nella procedura.
-L'algoritmo adottato per il calcolo è quello di \emph{Dijkstra} implementato dalla funzione \texttt{pgr\_dijkstra}. Le modalità richieste per l'invocazione dell0algoritmo richiedono come argomenti:
+L'algoritmo adottato per il calcolo è quello di \emph{Dijkstra} implementato dalla funzione \texttt{pgr\_dijkstra}. Le modalità richieste per l'invocazione dell'algoritmo richiedono come argomenti:
 \begin{itemize}
 \item il nodo sorgente da cui inizia il percorso, specificato tramite \emph{id} così come è presente nella tabella dei vertici;
 \item il nodo destinazione del tragitto, anch'esso individuato tramite \emph{id};
@@ -47,11 +47,73 @@ L'algoritmo adottato per il calcolo è quello di \emph{Dijkstra} implementato da
 \end{itemize}
 Per identificare i nodi sorgente e destinazione, il server esegue una ricerca a database calcolando i vertici più vicini rispetto alle coordinate di latitudine e longitudine fornite. 
 
-Per quanto riguarda il costo da fornire per ciascun arco, trattandosi del semplice caso \emph{Shortest Path}, si è utilizzata una \emph{query} che ritorna come peso la lunghezza in metri del segmento stesso. L'algoritmo di \emph{routing} cercherà quindi di minimizzare il peso degli archi selezionati e quindi il tragitto più breve.
+Per quanto riguarda il costo da utilizzare per ciascun arco, trattandosi del semplice caso \emph{Shortest Path}, si è svilupata una \emph{query} che ritorna come valore la lunghezza in metri del segmento stesso. L'algoritmo di \emph{routing} cercherà quindi di minimizzare il peso degli archi selezionati e quindi il tragitto più breve.
 
 Il risultato dell'interrogazione è manipolato tramite la classe di utilità \texttt{RouteResult} per ricavare alcune informazioni aggiuntive come ad esempio la lunghezza totale del percorso o le indicazioni di svolta tra un un tratto di strada e il successivo. 
 
-Il modo in cui si presentano i dati all'applicazione client ma anche al browser web è stato scelto coerente con le altri \emph{API}. Anche in questo caso si è optato per una risposta in formato \emph{GeoJSON} ed un esempio di invocazione è riportato in \ref{response-routing}.
+Il modo in cui si presentano i dati all'applicazione client ma anche al browser web è stato scelto coerentemente con le altre \emph{API}; anche in questo caso si è optato per una risposta in formato \emph{GeoJSON} ed un esempio di invocazione è riportato in \ref{response-routing}.
+
+\begin{lstlisting}[caption=Invocazione API di routing,label=response-routing]
+GET /api/route?
+
+BODY: 
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [
+                        11.8882108,
+                        45.4107728
+                    ],
+                    ...
+                    [
+                        11.8917144,
+                        45.409708
+                    ]
+                ]
+            },
+            "properties": {
+                "comment": "Shortest Path - generato con PGRouting",
+                "color": "red",
+                "distance": 388.26767042966577,
+                "maneuvers": [
+                    {
+                        "narrative": "Parti da Passeggiata Arturo Miolati",
+                        "iconUrl": "/public/images/start.gif",
+                        "streets": [
+                            "Passeggiata Arturo Miolati"
+                        ]
+                    },                  
+                    ...
+                    {
+                        "narrative": "Svolta a sinistra in Via Leonardo Loredan",
+                        "iconUrl": "/public/images/left.gif",
+                        "streets": [
+                            "Via Leonardo Loredan"
+                        ]
+                    },
+                    {
+                        "narrative": "Sei arrivato a destinazione",
+                        "iconUrl": "/public/images/end.gif",
+                        "streets": [
+                            "Via Leonardo Loredan"
+                        ]
+                    }
+                ],
+                "maneuverIndexes": [
+                    0,             
+                    ...
+                    9
+                ]
+            }
+        }
+    ]
+}
+\end{lstlisting}
 
 L'interpretazione della stessa risposta avviene con modalità diverse nei sistemi client, ovvero:
 \begin{itemize}
@@ -60,8 +122,71 @@ L'interpretazione della stessa risposta avviene con modalità diverse nei sistem
 \end{itemize}
 
 \subsection{Percorsi con \emph{label}}
-Calcolo dei percorsi valutando le label di luminosità e rumorosità. 
-Viste e funzioni di supporto sul database. 
-Modalità di calcolo dei costi, spiegazione delle formule.Requisiti del servizio di routing. 
+Uno degli obiettivi principali del progetto \emph{PathS} è il calcolo del percorso sfruttando le informazioni ricevute dai campionamenti di luce e rumorosità. L'implementazione dell'algoritmo di \emph{routing} per questo caso utilizza la stessa procedura presentata al punto precedente, manipolando però le strutture dati in moda da utilizzare le informazioni aggiuntive relative alle \emph{label}.
+
+Le problematiche da risolvere in questo contesto sono state principalmente due:
+\begin{itemize}
+\item introdurre la gestione del contesto \textbf{temporale} in cui viene eseguita l'interrogazione così come per i dati da interrogare. Mentre per il caso semplice \emph{Shortest Path} si fa riferimento ad informazioni immutabili nel tempo, in questo caso una interrogazioni in momenti diversi della giornata può comportare la consultazion di dati diversi e quindi risultati diversi;
+\item modificare la logica di \textbf{calcolo dei pesi} introducendo la valutazione dei campioni a sistema, in un modo coerente e funzionale con gli obiettivi di \emph{routing}. 
+\end{itemize}
+Per gestire del primo problema, si è proceduto con il definire il concetto di \textbf{classe temporale}. Tutti i campioni ricevuti sono stati suddivisi, sulla base del \emph{timestamp} della rilevazione stessa, in insiemi distinti che rapprsentano una fascia oraria delle giornata. Come compromesso tra semplicità e acuratezza dei risultati, si è scelto di definire quattro classi temporali uniformi, ciascuna delle quali copre un intervallo di 6 ore. Rispettivamente:
+\begin{itemize}
+\item classe \texttt{\textbf{0}} dalle \texttt{00:00} alle \texttt{05:59}: rappresenta il periodo notturno in cui i campioni di luminosità dovrebbero essere praticamente nulli così come quelli di rumorosità dovrebbero presentare valori molto bassi;
+\item classe \texttt{\textbf{1}} dalle \texttt{06:00} alle \texttt{11:59}: rappresenta il periodo influenzato delle condizioni di luce mattutine così come dalle attività (es. traffico pendolare);
+\item classe \texttt{\textbf{2}} dalle \texttt{12:00} alle \texttt{17:59}: è la fase in cui i campionamenti di luce dovrebbero essere determinanti data la maggiore esposizione;
+\item classe \texttt{\textbf{3}} dalle \texttt{18:00} alle \texttt{23:59}: è l'intervallo temporale serale, in cui la luce rilevata torna ad essere meno influente mentre i campionamenti audio potrebbero essere influenzati da attività particolari (es. traffico, attività di intrattenimento)
+\end{itemize}
+Per agevolare l'attribuzione dei campioni alla relativa classe temporale in tutte le operazioni a database, è stata definita una funzione di utilità così come consentito dal database \emph{PostgreSQL}. La definizione della funzione è \texttt{time\_class(timestamp without timezone) $\rightarrow$ integer} la quale riceve in input il timestamp del campione e ritorna l'intero delle classe temporale di appartenenza. Accentrando in un unico punto l'operazione di assegnazione, risulterà più agevole, se fosse necessario, cambiare le regole da utilizzare. 
+
+Un'altra operazione a supporto della manipolazione dei dati per questo caso di \emph{routing} è stata la definizione di alcune viste a database le quali riassumono le informazioni relative ai campionamenti e le presentano in una forma più agevole per lo sviluppo delle query. Le viste implementate sono \texttt{light\_sample} e \texttt{noise\_sample} la cui struttura è presentata in figura \ref{fig:db-views}. In questo modo si riassumono in un unico punto le informazioni complete relative ad un campinamento, ovvero:
+\begin{itemize}
+\item l'\textbf{id} di riferimento;
+\item il \textbf{segmento} della rete di trasporto a cui è stato attribuito;
+\item la \textbf{classe temporale} a cui appartiene;
+\item il \textbf{valore} rilevato per la \emph{label} in oggetto.
+\end{itemize}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=.3\textwidth]{db-views}
+  \caption{\footnotesize{Schema viste di supporto campionamenti.}}
+  \label{fig:db-views}
+\end{figure}
+
+L'ultima operazione necessaria per implementare il calcolo dei percorsi influenzato dalle \emph{label} è stata la definizione delle modalità di \textbf{calcolo dei pesi} nella valutazione degli archi della rete di trasporto.
+
+La formula da utilizzare deve rispettare le seuenti caratteristiche:
+\begin{itemize}
+\item deve considerare nel peso degli archi i campioni ricevuti e attribuiti a quel percorso;
+\item deve considerare solo i campionamenti che riguardano la classe temporale richiesta (momento della richiesta o impostata manualmente);
+\item deve comunque considerare che si vuole ottenere un percorso breve per cui è permesso un ``allungamento'' del tragitto a fronte di caratteristiche più vantaggiose (es. meno rumoroso) ma entro una certa soglia;
+\item alcuni tratti potrebbero non avere campionamenti attribuiti, quindi è necessario pesare in modo adeguato anche l'assenza di valori \emph{label}. 
+\end{itemize}
+Il risultato finale a cui si è giunti è il seguente:
+$$ c=l+(\alpha * l (\frac{\sum\limits_{i=1}^{i=n}v_{ti}}{n}-\beta)) $$
+dove:
+\begin{itemize}
+\item $c$ è il costo utilizzato come peso per l'arco;
+\item $l$ è la lunghezza del segmento espressa in metri;
+\item $\alpha$ è un parametro compreso tra $0$ e $1$ che indica il rapporto tra la componente di peso dipendente dalla lunghezza e la componente relativa alle \emph{label};
+\item $v_{ti}$ sono tutti i valori dei campioni per la classe temporale $t$ normati $\geq0$ e $\leq1$;
+\item $\beta$ è un parametro di soglia $\geq0$ e $\leq1$ utilizzato per scalare i segmenti senza rilevazioni assegnate.
+\end{itemize}
+
+Come si può vedere, il calcolo così formulato rispetta le condizioni per i casi limite, ovvero:
+\begin{itemize}
+\item per valori di $v_{ti} \approx 1$ e quindi molto alti, il peso totale $c$ è maggiore della lunghezza, al massimo aumentato del fattore $\alpha$ impostato di default a $0.25$;
+\item per valori di $v_{ti} \approx 0$ e quindi molto bassi, il peso attribuito è inferiore e quindi l'algoritmo tende a favorire l'uso di quel segmento (meno luminoso, meno rumoroso, etc.);
+\item nel caso non siano presenti campioni $v_{ti}$, il segmento è valutato solo per la sua lunghezza, mantenendo le proprietà dell'algoritmo per la ricerca del percorso più breve. Il segmento sarà preferito ai tratti con campionamenti dai valori alti sulla base del parametro $\beta$ di base impostato a $0.5$.
+\end{itemize}
+
+La porzione di codice in cui è stato implementato il calcolo e definite le \emph{query} da fornire all'algoritmo di \emph{routing} è nella classe \texttt{app.\-implementations.\-SPDLightRouter} la quale, come gli altri servizi di calcolo del percorso, implementa l'interfaccia \texttt{app.\-interfaces.\-Router}.
+
+Con modalità del tutto analoghe, è stato implementato lo stesso algoritmo di \emph{routing} per il caso dei percorsi meno rumorosi valutando le \emph{label} di tipo \texttt{NOISE}.
+
 \subsection{Servizio Map Quest}
-Interrogazione del servizio Map Quest come riscontro e \emph{fallback}. 
+Come sistema di verifica dei risultati è stato implementato un quarto servizio di routing, il quale non opera sui dati a sistema ma ottiene la risposta da un servizio esterno. Questa implementazione è stata utilizzata come controprova dei percorsi proposti dagli algoritmi di \emph{routing} nonchè come alternativa di \emph{fallback} nel caso in cui le informazioni inserite a database non siano sufficienti a coprire la zona interessata dalla richiesta.
+
+Il servizio utilizzato per l'interrogazione è offerto liberamento da \emph{MapQuest} e anch'esso si basa sui dati della cartografia \emph{OpenStreetMap}. L'\emph{API} fornita agli sviluppatori è di tipo \emph{HTTP} con formato di risposta \emph{JSON}. Il codice sviluppato a supporto dell'esecuzione della chiamata \emph{webservice} e interpretazione della risposta è presente nella classe di utilità \texttt{app.\-utils.\-MapQuestQuery} e nella classe di modello \texttt{app.\-models.\-MapQuestResponse}. L'operazione eseguita è sostanzialmente quella di richiedere il percorso più breve tra la posizione di partenza e destinazione indicate tramite le coordinate di latitudine e longitudine.
+
+Il componente sviluppato per questa funzionalità implementa anch'esso l'interfaccia \texttt{app.\-interfaces.\-Router} rendendo quindi del tutto uniforme la modalità di presentazione dei dati ai client.

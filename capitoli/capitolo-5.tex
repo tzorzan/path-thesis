@@ -3,7 +3,7 @@ La funzione di ricezione dei campioni ha richiesto la definizione di una nuova \
 \section{API}
 Nel definire il dettaglio delle chiamate necessarie all'invio dei dati, si è valutato di prediligere i criteri di semplicità e adeguamento alle tecnologie attuali. Si è quindi optato per una \emph{API HTTP} e contenuto in formato JSON. La chiamata da utilizzare per l'invio dei dati risponde alla seguente specifica:
 
-\begin{verbatim}
+\begin{lstlisting}[caption=Invocazione API di invio dati,label=response-data]
 POST /api/data
 
 BODY: 
@@ -35,7 +35,7 @@ BODY:
         "vote": <vote_number>
     }
 }
-\end{verbatim}
+\end{lstlisting}
  Il formato definito consente di specificare una lista di elementi di campionamento e per ciascuno di esso le informazioni necessarie. Ogni campionamento è individuato da una chiave \emph{id} generata in modo casuale dal \emph{client} seguendo lo standard UUID versione 4\footnote{\url{https://en.wikipedia.org/wiki/Universally_unique_identifier}}. Per ciascun campionamento sono indicati:
 \begin{itemize}
 	\item l'\emph{id} di riferimento;
