@@ -1,4 +1,4 @@
-Tra le due componenti in cui si articola il progetto, la prima sviluppata è stata la componente \emph{client}. Questa parte consiste sostanzialmente di una applicazione per dispositivi \emph{smartphone} Android, completamente riscritta a partire da alcuni sviluppi precedenti per poter assolvere alle nuove funzioni specifiche di \emph{PathS}. Si riassumono i requisiti che sono stati identificati e i criteri principali che hanno determinato lo sviluppo del software. 
+Tra le due componenti in cui si articola il progetto, la prima sviluppata è stata la componente \emph{client}. Questa parte consiste sostanzialmente di una applicazione per dispositivi \emph{smartphone} Android, completamente riscritta a partire da alcuni sviluppi precedenti per poter assolvere alle nuove funzioni specifiche di \emph{PathS}. Le attività di studio e implementazione sono state svolte da Stefano Tombolini e documentate nella relativa tesi di Laurea \cite{tesitombolini}. Si riassumono nel capitolo seguente i requisiti che sono stati identificati e i criteri principali che hanno determinato lo sviluppo del software così da fornire una visione più completa dello sviluppo del progetto. 
 
 \section{Requisiti}
 Il client mobile \emph{PathS} presenta tutte le caratteristiche di una applicazione sviluppata secondo il paradigma \emph{Web\textsuperscript{2}}. 
@@ -44,13 +44,16 @@ Un'altra libreria fondamentale utilizzata nello sviluppo dell'applicazione mobil
 Per ulteriori dettagli riguardanti la selezione degli strumenti e l'implementazione dell'applicazione client si rimanda alla tesi specifica \cite{tesitombolini}.
 
 \section{Stato attuale}
-In generale l'applicazione presenta un funzionamento completo e copre tutto il caso d'uso previsto. L'operazione di raccolta dati e trasmissione al server viene eseguita correttamente, così come l'interrogazione dei risultati disponibili e la presentazione degli stessi all'utente in modalità mappa e navigazione \emph{turn by turn}.
-Tuttavia ci sono alcune aree in cui una evoluzione consentirebbe un utilizzo più pratico dell'applicazione e un miglioramento nei dati forniti alla componente server. 
-Alcune di queste aree sono:
+In generale l'applicazione \emph{client} presenta tutte le carateristiche indispensabili dal punto di vista funzionale per consentire lo sviluppo della controparte \emph{server}.
+
+L'operazione di trasmissione dei campioni al server viene eseguita correttamente, così come l'interrogazione dei risultati disponibili e la presentazione degli stessi all'utente in modalità mappa e navigazione \emph{turn by turn}.
+
+Tuttavia ci sono alcune aree importanti in cui una revisione consentirebbe un miglioramento dei dati forniti alla componente \emph{server} e un utilizzo più pratico dell'applicazione. 
+I punti di intervento proposti si riassumono in:
 \begin{itemize}
-\item Miglioramento della scala dei valori raccolti e normalizzazione degli stessi, in particolare per quanto riguardo la luminosità. Nei test eseguiti molti valori raggiungono il 100\%, presentando pochi casi con valori intermedi nonostante le diverse situazioni reali di applicazione. Questa caratteristica coinvolge l'intero sistema e i servizi forniti, influenzando direttamente i risultati finali.
+\item Correzione della scala dei valori raccolti e normalizzazione degli stessi, in particolare per quanto riguardo la luminosità. Nei test eseguiti molti valori raggiungono il $100\%$, presentando pochi casi con valori intermedi nonostante le diverse situazioni reali di applicazione. Questa imprecisione si ripercuote sull'intero sistema e i servizi forniti, influenzando direttamente i risultati finali.
 \item Miglioramento delle modalità con cui si comunica all'utente la trasmissione dei dati al server, rendendo esplicito il momento in cui tale comunicazione avviene ed eventuali malfunzionamenti (rete non presente, connessione fallita, etc).
 \item Miglioramento della responsività della app, in particolare nell'accesso al modulo di navigazione che spesso non è ``smooth'' in particolare in dispositivi non performanti. In generale i rallentamenti nel feedback e il funzionamento scattoso peggiorano l'esperienza utente e disincentivano l'utilizzo della app.
 \item Verificare il consumo di risorse che si verifica durante l'esecuzione di tutte le operazioni in \emph{background}, valutando una ottimizzazione delle stesse. In molti casi si è verificato un consumo abbondante della carica batteria e talvolta anche un surriscaldamento del dispositivo.
 \end{itemize}
-Al netto degli spunti di possibile miglioramento, lo stato attuale dell'applicazione mobile ha comunque consentito e supportato lo sviluppo della componente server e quindi dell'intera soluzione \emph{PathS}. Le versioni aggiornate dell'applicazione possono essere scaricate da: \url{http://path-graphs.herokuapp.com/theproject/index.html}.
+Al netto degli spunti di possibile miglioramento, lo stato attuale dell'applicazione mobile ha comunque consentito e supportato lo sviluppo della componente server e quindi dell'intera soluzione \emph{PathS}. Le versioni aggiornate dell'applicazione possono essere scaricate dal sito del progetto \cite{paths-graphs}.
