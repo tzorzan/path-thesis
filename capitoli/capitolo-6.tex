@@ -91,7 +91,7 @@ Gli algoritmi di entrambe le categorie possono essere ulteriormente categorizzat
 \item \textbf{geometrici}: quando si considerano unicamente le caratteristiche geometriche dei segmenti della rete di trasporto. Alcuni esempi di questa tecnica sono gli algoritmi \emph{point-to-point}, \emph{point-to-segment} o \emph{curve-to-curve} in cui l'oggetto in movimento viene associato calcolando diversi tipi di distanza (Euclidea, perpendicolare, Fréchet).
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.5\textwidth]{geometric-mapmatching}
+  \includegraphics[width=.6\textwidth]{geometric-mapmatching}
   \caption{\footnotesize{Esempio d algoritmi di \emph{Map Matching} geometrico.}}
   \label{fig:geometric-mapmatching}
 \end{figure}
@@ -136,7 +136,7 @@ Le operazioni citate sono implementate nel metodo \texttt{doStep1()} della class
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.8\textwidth]{st-mapmatching-step1}
+  \includegraphics[width=.9\textwidth]{st-mapmatching-step1}
   \caption{\footnotesize{Risultato dell'esecuzione \emph{step} 1 dell'algoritmo \emph{ST Matching}.}}
   \label{fig:st-mapmatching-step1}
 \end{figure}
@@ -157,7 +157,7 @@ L'implementazione del calcolo è risultato relativamente agevole tramite la funz
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.8\textwidth]{st-mapmatching-step2}
+  \includegraphics[width=.9\textwidth]{st-mapmatching-step2}
   \caption{\footnotesize{Risultato dell'esecuzione \emph{step} 2 dell'algoritmo \emph{ST Matching}.}}
   \label{fig:st-mapmatching-step2}
 \end{figure}
@@ -179,7 +179,7 @@ Tuttavia la probabilità di osservazione non tiene conto del contesto in cui si 
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.3\textwidth]{st-mapmatching-transmission}
+  \includegraphics[width=.5\textwidth]{st-mapmatching-transmission}
   \caption{\footnotesize{Esempio di situazione in cui è necessaria la valutazione della probabilità di trasmissione.}}
   \label{fig:st-mapmatching-transmission}
 \end{figure}
@@ -192,7 +192,7 @@ dove $N$ è la funzione per il calcolo della probabilità di osservazione e $V$ 
 La valutazione secondo l'analisi temporale rsulta utile per i casi in cui l'analisi spaziale non sia determinante come l'esempio riportato in figura: \ref{fig:st-mapmatching-temporal}. La sola analisi geometrica non fornisce indicazioni rilevanti come invece può essere il fatto di consderare la velocità con cui si muove l'oggetto rispetto al tratto di rete di trasporto. La comparazione tra la velocità media delle rilevazioni GPS e la velocità indicativa del tratto è definita in dettaglio nel \cite[paragrafo 5.3]{stmapmatching}.
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.3\textwidth]{st-mapmatching-temporal}
+  \includegraphics[width=.5\textwidth]{st-mapmatching-temporal}
   \caption{\footnotesize{Esempio di situazione in cui è necessaria l'analisi temporale.}}
   \label{fig:st-mapmatching-temporal}
 \end{figure}
@@ -202,7 +202,7 @@ Tutte le operazioni di calcolo sono implementate nella classe \texttt{app.\-util
 Eseguite l'analisi temporale e spaziale per tutti i candidati, si è in grado di generare un grafo dei candidati $G_T'(V_T', E_T')$ per la traiettoria $T=p_1 \rightarrow p_2 \rightarrow ... p_n$ in cui $V_T'$ è l'insieme dei candidati per ciascun punto di campionamento GPS ed $E_T'$ è l'insieme di tutte le connessioni tra due candidati vicini come rappresentato in figura \ref{fig:st-mapmatching-graph}.
 \begin{figure}[h]
   \centering
-  \includegraphics[width=.5\textwidth]{st-mapmatching-graph}
+  \includegraphics[width=.9\textwidth]{st-mapmatching-graph}
   \caption{\footnotesize{Grafo dei candidati.}}
   \label{fig:st-mapmatching-graph}
 \end{figure}
@@ -213,6 +213,7 @@ $$P=arg max_{P_C} F(P_C), \quad \forall P_C \, \in G_T'(V_T', E_T')$$
 In generale, il problema di ricerca del percorso più lungo in un grafo è \emph{NP} completo, tuttavia il fatto che il grafo sia diretto e aciclico (\emph{DAG}) fa sì che possa essere calcolato in modo efficiente sfruttando l'ordine topologico del grafico ottenuto per costruzione.
 
 Il procedimento implementato per il calcolo è quello presentato al \cite[paragrafo 5.4]{stmapmatching}) con il nome di \emph{FindMatchedSequence} e se ne riporta lo pseudo codice.
+
 \begin{lstlisting}[mathescape]
 Input: Candidate graph $G_T'(V_T', E_T')$
 Output: The longest sequence $P: c_1^s1 \rightarrow c_2^s2 \rightarrow ... c_n^sn$ in $G_T'$
@@ -239,6 +240,7 @@ for $i=n$ to $2$ do
 rList.add(c);
 return rList.reverse();
 \end{lstlisting}
+
 Il risultato dell'esecuzione dell'algortimo produce in \emph{output} il \emph{matching} ottimale per tutti i candidati. Il risultato dell'esecuzione applicato ai percorsi \emph{PathS} è consultabile da interfaccia di amministrazione tramite i collegamenti allo \emph{step 3}.
 
 Al termine della procedura di \emph{Map Matching} il sistema interpreta i risultati ottenuti assegnando i valori dei campioni di luminosità e rumore al segmento della rete di trasporto associato. Questa informazione è considerata nelle procedure di calcolo dei percorsi presentate nel prossimo capitolo.
