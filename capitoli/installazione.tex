@@ -10,8 +10,8 @@ L'ambiente di esecuzione si compone di due elementi principali, il \textbf{datab
 \subsection{Database}
 E' necessario utilizzare un database \emph{PostgreSQL ver 9.3} o superiore. L'installazione può avvenire sia tramite il gestore dei pacchetti del sistema operativo che in modalità manuale. Oltre al pacchetto standard, sarà necessario installare due estensioni del database, in particolare:
 \begin{itemize}
-\item \textbf{PostGIS}: una estensione che consente la memorizzazione di dati spaziali e fornisce altre funzioni di manipolazione di dati geografici (\url{http://postgis.net});
-\item \textbf{PGRouting}:una libreria che estende ulteriormente le funzioni del database geospaziale introducendo algoritmi di \emph{routing} e procedure di supporto (\url{http://pgrouting.org}).
+\item \textbf{PostGIS}: un'estensione che consente la memorizzazione di dati spaziali e fornisce altre funzioni di manipolazione di dati geografici (\url{http://postgis.net});
+\item \textbf{PGRouting}: una libreria che estende ulteriormente le funzioni del database geospaziale introducendo algoritmi di \emph{routing} e procedure di supporto (\url{http://pgrouting.org}).
 \end{itemize}
 Nei sistemi \emph{Ubuntu Linux} l'installazione del servizio di database e di tutte le dipendenze può avvenire tramite l'esecuzione dei comandi:
 \begin{verbatim}
@@ -62,4 +62,4 @@ play stop
 Il software utilizzerà come \emph{log} di sistema il file: \texttt{/logs/system.out}.
 
 \section{Note}
-E' necessario riconfigurare i client mobile affinchè puntino al nuovo servizio server avviato. Questa operazione allo stato attuale può essere effettuata modificando il file sorgente \texttt{com.\-path3ar.\-model\-Utilities.java} e rieseguendo packaging ed installazione dell'applicazione.
+E' necessario riconfigurare i client mobile affinchè puntino al nuovo server avviato. Questa operazione allo stato attuale può essere effettuata modificando il file sorgente \texttt{com.\-path3ar.\-model\-Utilities.java} e rieseguendo packaging ed installazione dell'applicazione.

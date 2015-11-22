@@ -45,7 +45,7 @@ BODY:
 	\item le \emph{etichette} e i \emph{valori} per il campione rilevato dai sensori.
 \end{itemize}
 Tutti i valori sono numeri e stringhe in formato JSON. Per la struttura del contenuto si è preferito non adottare una forma libera ma piuttosto aderire ad uno standard già definito, ovvero GeoJSON\footnote{\url{http://geojson.org}}. In questo modo, pur consentendo una struttura semplice ed estendibile (il numero e il tipo di rilevazioni non è limitato), si è favorita l'inter-operabilità con altre librerie e servizi. Risulta inoltre più agevole una validazione del formato dei dati ricevuti.
-Per le chiamata non è stato previsto alcun protocollo di autenticazione del \emph{client}, ritenendolo non necessario in questa fase di sviluppo del progetto.
+Per la chiamata non è stato previsto alcun protocollo di autenticazione del \emph{client}, ritenendolo non necessario in questa fase di sviluppo del progetto.
 
 \section{Implementazione}
 L'implementazione dei componenti server che gestiscono la chiamata è risultata agevolata dagli strumenti messi a disposizione dal framewrok selezionato. Per rispondere alla chiamata \emph{HTTP} si è sviluppata la classe \texttt{Api.java}, la quale estende la classe \texttt{play.Controller} e quindi mappa sul metodo \texttt{data()} la gestione della richiesta.
@@ -53,7 +53,7 @@ Il metodo implementato si occupa di deserializzare i dati della richiesta JSON, 
 Una volta estratti i campi necessari, vengono utilizzati per ricreare gli oggetti di modello necessari alla persistenza. Per ciascun invio vengono quindi creati:
 \begin{itemize}
     \item \textbf{un} oggetto \textbf{Path} che rappresenta il pecorso inviato, lo identifica con un \emph{id} interno, tiene traccia della \emph{data} in cui è stato ricevuto e della \emph{valutazione} indicata dall'utente;
-    \item \textbf{molteplici} oggetti \textbf{Sample}, uno per ciascun campionamento e quindi in relazione \emph{many to one} con l'oggetto \emph{Path}. Questo oggetto contiene tutte le informazioni relativa al campione (\emph{coordinate GPS}, \emph{accuratezza}, \emph{timestamp}, ...) più alcuni campi necessari alla successiva elaborazione (es. \emph{roadsegment\textunderscore id});
+    \item \textbf{molteplici} oggetti \textbf{Sample}, uno per ciascun campionamento e quindi in relazione \emph{many to one} con l'oggetto \emph{Path}. Questo oggetto contiene tutte le informazioni relative al campione (\emph{coordinate GPS}, \emph{accuratezza}, \emph{timestamp}, ...) più alcuni campi necessari alla successiva elaborazione (es. \emph{roadsegment\textunderscore id});
     \item \textbf{molteplici} oggetti \textbf{Label}, uno per ciascuna tipologia di rilevamento effetuata. Anche questi oggeti sono in relazione \emph{many to one} con l'entità \emph{Sample}. Il valore delle etichette è di tipo numerico decimale.
 \end{itemize}
 
@@ -87,4 +87,4 @@ Un esempio di contenuto della chiamata è presente all'indirizzo \url{http://pat
   \caption{\footnotesize{Lista dei tracciati \emph{Path} ricevuti.}}
   \label{fig:sample-list}
 \end{figure}
-Il risultato ottenuto dall'invio di alcuni campionamenti al server può essere osservato in figura \ref{fig:sample-view}. Il server mette inoltre a disposizione una pagina di amministrazione che presenta la lista dei traciati ricevuti, le informazioni principali, e i link alla visualizzazione delle altre funzionalità (figura \ref{fig:sample-list}).
+Il risultato ottenuto dall'invio di alcuni campionamenti al server può essere osservato in figura \ref{fig:sample-view}. Il server mette inoltre a disposizione una pagina di amministrazione che presenta la lista dei tracciati ricevuti, le informazioni principali e i link alla visualizzazione delle altre funzionalità (figura \ref{fig:sample-list}).
