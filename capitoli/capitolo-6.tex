@@ -18,7 +18,7 @@ Google fornisce \emph{API} e \emph{SDK} per le principali piattaforme applicativ
 La prima caratteristica per cui si contraddistingue il servizio Google Maps è che non consente l'accesso diretto alle informazioni cartografiche. Non è possibile estrapolare parte di questi dati, siano essi in forma grezza o finita. Da qui la necessità di utilizzare uno dei servizi a disposizione per ottenere le informazioni necessarie, in particolare il servizio \textbf{Google Maps Direction API}. Con tale servizio è possibile ottenere un percorso impostando un punto di partenza ed una destinazione. Lo stesso servizio era utilizzato in precedenza dal progetto \emph{Path 2.0} e veniva impiegato direttamente per il calcolo della soluzione finale da proporre agli utenti. Tuttavia questo tipo di accesso non consente di ottenere dati per una determinata zona se non con una precisa interrogazione. Inoltre l'utilizzo delle \emph{API} presenta i seguenti limiti:
 \begin{itemize}
   \item il numero di interrogazioni è limitato dal tipo di piano utilizzato. Il servizio libero e gratuito denominato \emph{Standard} consente 2,500 chiamate al giorno, applicando una tariffa per le successive. Questa situazione sarebbe stata sostenibile per le prime fasi prototipali del progetto, ma non per una sua applicazione su larga scala.
-  \item il piano di utilizzo \emph{Standard} limita anche l'utilizzo della funzione ``waypoint'' nel calcolo del percorso ad 8 tappe intermedie. Questo risulterebbe un ulteriore limite nel calcolo dei percorsi complessi;
+  \item il piano di utilizzo \emph{Standard} limita anche l'utilizzo della funzione \emph{waypoint} nel calcolo del percorso ad 8 tappe intermedie. Questo risulterebbe un ulteriore limite nel calcolo dei percorsi complessi;
   \item il servizio Maps opera direttamente sui dati memorizzati da Google ma non è possibile aumentare o integrare direttamente questo insieme di dati. Non è possibile quindi sfruttare gli algoritmi forniti dal servizio (es. calcolo percorso) su un insieme di informazioni \emph{custom} (es. i campioni di luminosità), se non tramite un uso indiretto e improprio delle \emph{API}.
 \end{itemize}
 Alla data in cui si è eseguita l'analisi comparativa, i servizi \emph{Google Maps} non disponevano ancora delle \emph{Roads API} introdotte in forma sperimentale nel Marzo 2015. La funzione di interpolazione e mapping dei punti GPS sarebbe risultata molto utile all'applicazione del progetto ma per questo motivo non è stata considerata.
@@ -33,7 +33,7 @@ Considerate le caratteristiche di libero accesso e riutilizzo, nonchè la comple
 Entrambe le opzioni non si presentano particolarmente agevoli per le esigenze del progetto, tuttavia grazie alle caratteristiche degli \emph{open data}, è stato possibile trovare delle valide alternative che, pur basandosi sui dati \emph{OSM}, fornisco modalità di integrazione più idonee al contesto.
 
 \subsubsection{Overpass API}
-Il servizio di interrogazione \emph{Overpass API} è uno strumento di introduzione recente che si è aggiunto come alternativa di consultazione in sola lettura dei dati \emph{OpenStreetMap}. Il suo scopo è quello di agire come un ``\emph{database over the web}'' che può essere interrogato in modo efficiente tramite un linguaggio specifico \cite{overpass-api}. Un client può quindi eseguire una chiamata API comunicando la \emph{query} da eseguire e in breve ottenere una risposta che raccoglie anche migliaia di elementi geografici. Il servizio è erogato liberamente e senza limitazione da infrastrutture di servizi terzi (es. \url{http://overpass-api.de}). Sono presenti inoltre strumenti on-line (ad esempio: \cite[Overpass~Turbo]{overpass-turbo}) i quali asssitono lo sviluppo e testano l'esecuzione delle interrogazioni scritte nel formato specifico \emph{Overpass Query Language}.
+Il servizio di interrogazione \emph{Overpass API} è uno strumento di introduzione recente che si è aggiunto come alternativa di consultazione in sola lettura dei dati \emph{OpenStreetMap}. Il suo scopo è quello di agire come un \emph{database over the web} che può essere interrogato in modo efficiente tramite un linguaggio specifico \cite{overpass-api}. Un client può quindi eseguire una chiamata API comunicando la \emph{query} da eseguire e in breve ottenere una risposta che raccoglie anche migliaia di elementi geografici. Il servizio è erogato liberamente e senza limitazione da infrastrutture di servizi terzi (es. \url{http://overpass-api.de}). Sono presenti inoltre strumenti on-line come ad esempio: \cite[Overpass~Turbo]{overpass-turbo}, i quali assistono lo sviluppo e testano l'esecuzione delle interrogazioni scritte nel formato specifico \emph{Overpass Query Language}.
 
 \begin{figure}[ht]
   \centering
@@ -46,7 +46,7 @@ Le funzionalità offerte da questa soluzione sono state valutate come ottimali n
 \begin{itemize}
 \item sono uno strumento specificatamente sviluppato per l'integrazione lato server (\emph{webservice});
 \item dispongono di sufficiente documentazione e strumenti di supporto allo sviluppo;
-\item consentono di interrogare in modo parziale i dati cartografici \emph{OpenStreetMap} per la sola porzione di interesse (ad esempio il singolo percorso analizzato);
+\item consentono di interrogare in modo parziale i dati cartografici \emph{OpenStreetMap} per la sola porzione di interesse ad esempio il singolo percorso da analizzare;
 \item non impongono nessun tipo di limitazione in termini di numero o estensione delle interrogazioni.
 \end{itemize}
 
@@ -60,21 +60,21 @@ Nell'implementazione del server sono stati sviluppate alcune classi di utilità 
 \subsubsection{Mapquest}
 Oltre al servizio di inerrogazione dei dati \emph{OpenStreetMap} si è ritenuto opportuno identificare anche un servizio di \emph{routing} che operasse sugli stessi dati, interrogabile tramite \emph{webservices} dalla componente server. Sebbene questa funzione non sia indispensabile, è risultata molto utile in fase di sviluppo e come verifica del funzionamento degli algoritmi. Il servizio è inoltre utilizzato come risposta di \emph{fallback} nel caso non vi siano dati disponibili da fornire ai \emph{client}.
 
-La soluzione individuata è quella fornita da \emph{MapQuest} (\url{https://developer.mapquest.com}). Come per gli altri servizi, le interrogazioni avvengono tramite \emph{API HTTP} in formato \emph{JSON} e quindi gestite da alcune classi \emph{Java} di supporto per l'interrogazione (\texttt{app.\-utils.\-MapQuestQuery.java}) e l'interpretazione (\texttt{app.\-models.\-boundaries.\-MapQuestResponse.java}).
+La soluzione individuata è quella fornita da \emph{MapQuest} \cite{mapquest}. Come per gli altri servizi, le interrogazioni avvengono tramite \emph{API HTTP} in formato \emph{JSON} e quindi gestite da alcune classi \emph{Java} di supporto per l'interrogazione (\texttt{app.\-utils.\-MapQuestQuery.java}) e l'interpretazione (\texttt{app.\-models.\-boundaries.\-MapQuestResponse.java}).
 
 
 \section{Persistenza ed eleaborazione dei dati GIS}
-Una delle esigenze che si presenta nello sviluppo del server \emph{PathS} è la persistenza e l'interrogazione di dati di tipo geografico. Ad esempio può essere necessario salvare le coordinate di cui si compone un percorso pedonale o ricercare tutti gli elementi salvati entro una certa distanza da una posizione nota. Per eseguire questo tipo di operazioni in modo agevole ed efficiente, è stata adottata la libreria \textbf{\emph{PostGIS}} (\url{http://postgis.net}).
+Una delle esigenze che si presenta nello sviluppo del server \emph{PathS} è la persistenza e l'interrogazione di dati di tipo geografico. Ad esempio può essere necessario salvare le coordinate di cui si compone un percorso pedonale o ricercare tutti gli elementi salvati entro una certa distanza da una posizione nota. Per eseguire questo tipo di operazioni in modo agevole ed efficiente, è stata adottata la libreria \textbf{\emph{PostGIS}} \cite{postgis}.
 
 Questa libreria si propone come estensione del database \emph{PostgreSQL} aggiungendo alcuni elementi fondamentali, tra cui:
 \begin{itemize}
-\item tipi di dato geometrico e geografico (ad esempio punti, linee spezzate, poligoni);
-\item funzioni ed operatori di manipolazione dei dati geometrici (intersezione, unione, calcolo distanza, proiezione, etc.);
+\item tipi di dato geometrico e geografico ad esempio: punti, linee spezzate, poligoni;
+\item funzioni ed operatori di manipolazione dei dati geometrici come intersezione, unione, calcolo distanza e proiezione;
 \item indici ed ottimizzazioni per la gestione dei dati spaziali.
 \end{itemize}
 Le operazioni sui dati spaziali sono accessibili come funzioni e primitive del linguaggio \emph{SQL} utilizzato per interrogare il \emph{database}. L'utilizzo di questa libreria ha consentito di implementare agevolmente le operazioni richieste dagli algoritmi e di garantire già una prima forma di ottimizzazione e accesso intelligente ai dati salvati, caratteristica non banale nel caso si fosse dovuta ri-sviluppare da zero.
 
-Di pari passo all'adozione della libreria per il \emph{database}, si è valutato anche uno strumento per l'ambiente \emph{Java} il quale fornisce la rappresentazione base dei tipi geometrici le operazioni basilari su di essi. La soluzione individuata è stata la libreria \textbf{\emph{JTS}} (\url{http://www.vividsolutions.com/jts/JTSHome.htm}) la quale tramite il \emph{package} \texttt{com.\-vividsolutions.\-jts} fornisce una gerarchia di classi e operazioni per la rappresentazione e manipolazione di dati spaziali 2D. L'implementazione è in puro linguaggio \emph{Java} e quindi si integra facilmente nel contesto software del server.
+Di pari passo all'adozione della libreria per il \emph{database}, si è valutato anche uno strumento per l'ambiente \emph{Java} il quale fornisce la rappresentazione base dei tipi geometrici le operazioni basilari su di essi. La soluzione individuata è stata la libreria \textbf{\emph{JTS}} \cite{jts} la quale tramite il \emph{package} \texttt{com.\-vividsolutions.\-jts} fornisce una gerarchia di classi e operazioni per la rappresentazione e manipolazione di dati spaziali 2D. L'implementazione è in puro linguaggio \emph{Java} e quindi si integra facilmente nel contesto software del server.
 
 
 \section{Algoritmo di Map Matching}
@@ -233,7 +233,7 @@ for $i=2$ to n do
         $max = alt$
         pre[$c_i^s$] $= c_i-1^t$;
       f[$c_i^s$] $= max$;
-Initialize \emph{rList} as an empty list;
+Initialize rList as an empty list;
 $c = arg max_{c_n^s} (f[c_n^s])$
 for $i=n$ to $2$ do
   rList.add(c);

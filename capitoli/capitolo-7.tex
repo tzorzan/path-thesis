@@ -9,7 +9,7 @@ Tuttavia per poter operare correttamente la libreria necessita che siano verific
 	\item la base dati deve contenere le informazioni sulla topologia della rete affinché si possa costruire un grafo utilizzabile dagli algoritmi.
 \end{itemize}
 
-Per affrontare il primo problema, la libreria mette a disposizione una funzione di ``\emph{noding}''. Tale procedura riceve in input la tabella in cui sono contenuti i dati geografici e un valore di tolleranza, quindi rielabora le informazioni cercando di rimuovere situazioni non coerenti ad esempio:
+Per affrontare il primo problema, la libreria mette a disposizione una funzione di \emph{noding}. Tale procedura riceve in input la tabella in cui sono contenuti i dati geografici e un valore di tolleranza, quindi rielabora le informazioni cercando di rimuovere situazioni non coerenti ad esempio:
 \begin{itemize}
  \item intersezioni non gestite come il caso \emph{(1)} in figura \ref{fig:pgrouting-noding}. In alcuni casi i segmenti presenti nel database potrebbero intersecarsi senza però che sia presente il corrispondente punto di intersezione. In questa situazione le successive operazioni di \emph{routing} non sarebbero in grado di sfruttare l'intersezione come punto di svolta. La procedura quindi analizza i dati \emph{GIS} per individuare le possibili sovrapposizioni e in corrispondenza delle stesse crea dei vertici aggiuntivi spezzando i segmenti. La procedura mantiene traccia del numero e dell'ordine in cui vengono decomposti gli elementi originali.
  \item segmenti adiacenti con estremi che non coincidono come il caso \emph{(2)} in figura \ref{fig:pgrouting-noding}. In questa situazione la funzione cerca di semplificare e riunire in un unico vertice gli elementi che sono all'interno della distanza di tolleranza impostata. Senza questa elaborazione i due segmenti non potrebbero essere utilizzati dall'algoritmo di \emph{routing} dato che non sono comunicanti.
@@ -54,7 +54,7 @@ Il risultato dell'interrogazione è manipolato tramite la classe di utilità \te
 Il modo in cui si presentano i dati all'applicazione client ma anche al browser web è stato scelto coerentemente con le altre \emph{API}; anche in questo caso si è optato per una risposta in formato \emph{GeoJSON} ed un esempio di invocazione è riportato in \ref{response-routing}.
 
 \begin{lstlisting}[caption=Invocazione API di routing,label=response-routing]
-GET /api/route?
+GET /api/route?from={lat},{lon}&to={lat},{lon}
 
 BODY: 
 {
@@ -77,12 +77,12 @@ BODY:
                 ]
             },
             "properties": {
-                "comment": "Shortest Path - generato con PGRouting",
+                "comment": "Shortest Path - PGRouting",
                 "color": "red",
                 "distance": 388.26767042966577,
                 "maneuvers": [
                     {
-                        "narrative": "Parti da Passeggiata Arturo Miolati",
+                        "narrative": "Parti da Passeggiata ...",
                         "iconUrl": "/public/images/start.gif",
                         "streets": [
                             "Passeggiata Arturo Miolati"
@@ -90,14 +90,14 @@ BODY:
                     },                  
                     ...
                     {
-                        "narrative": "Svolta a sinistra in Via Leonardo Loredan",
+                        "narrative": "Svolta a sinistra Via ...",
                         "iconUrl": "/public/images/left.gif",
                         "streets": [
                             "Via Leonardo Loredan"
                         ]
                     },
                     {
-                        "narrative": "Sei arrivato a destinazione",
+                        "narrative": "Arrivato a destinazione",
                         "iconUrl": "/public/images/end.gif",
                         "streets": [
                             "Via Leonardo Loredan"
@@ -158,8 +158,8 @@ L'ultima operazione necessaria per implementare il calcolo dei percorsi influenz
 La formula da utilizzare deve rispettare le seguenti caratteristiche:
 \begin{itemize}
 \item considerare nel peso degli archi i campioni ricevuti e attribuiti a quel percorso;
-\item considerare solo i campionamenti che riguardano la classe temporale richiesta (momento della richiesta o impostata manualmente);
-\item considerare che si vuole ottenere un percorso breve per cui è permesso un ``allungamento'' del tragitto a fronte di caratteristiche più vantaggiose (es. meno rumoroso) ma entro una certa soglia;
+\item considerare solo i campionamenti che riguardano la classe temporale al momento della richiesta o impostata manualmente;
+\item considerare che si vuole ottenere un percorso breve per cui è permesso un allungamento del tragitto a fronte di caratteristiche più vantaggiose (es. meno rumoroso) ma entro una certa soglia;
 \item alcuni tratti potrebbero non avere campionamenti attribuiti, quindi è necessario pesare in modo adeguato anche l'assenza di valori \emph{label}. 
 \end{itemize}
 Il risultato finale a cui si è giunti è il seguente:

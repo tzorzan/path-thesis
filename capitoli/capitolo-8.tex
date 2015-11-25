@@ -5,7 +5,7 @@ In questa situazione tutte le operazioni di pre-processamento ed elaborazione de
 
 \begin{itemize}
   \item i diversi tipi di calcolo si discostano nel risultato suggerendo percorsi diversi;
-  \item i percorsi suggeriti hanno lunghezze totali analoghe, aumentando leggermente per rispettare la preferenza accordata (valutazione del rumore o della luminosità);
+  \item i percorsi suggeriti hanno lunghezze totali analoghe, aumentando leggermente per rispettare la preferenza accordata come la valutazione del rumore o della luminosità;
   \item il percorso più breve calcolato (in rosso) è praticamente coincidente con quello fornito dai servizi esterni (in blu);
   \item il percorso meno luminoso (indicato in grigio) cerca di evitare per quanto possibile le zone con campionamenti di luminosità dai valori alti;
   \item il percorso meno rumoroso (indicato in verde) non suggerisce il percorso più breve ma comprende tratti con campionamenti di rumore bassi;
@@ -50,4 +50,4 @@ In una fase del progetto si è pensato di implementare questa componente da zero
 Per difficoltà implementative, si è poi optato per la soluzione tramite l'utilizzo della libreria \emph{PGRouting}. La realizzazione di alcune alternative, possibilmente basate su algoritmi diversi, anche in questo caso potrebbe portare alle selezione di un prodotto che presenti caratteristiche migliori in termini di qualità dei risultati forniti o di complessità.
 
 \subsubsection{Altri servizi}
-I servizi offerti da \emph{PathS} potrebbero non riguardare solo le interrogazioni relative al \emph{routing}. I dati raccolti e il relativo processamento potrebbe essere una base di partenza per altri tipi di analisi, ad esempio uno studio sulle zone più frequentate nei diversi momenti della giornata o sui flussi più probabili. Analogamente si potrebbero sviluppare applicazioni del tipo ``\emph{get-together}'' che favoriscono l'incontro tra gli utenti e lo scambio di informazioni in chiave \emph{social}.
+I servizi offerti da \emph{PathS} potrebbero non riguardare solo le interrogazioni relative al \emph{routing}. I dati raccolti e il relativo processamento potrebbe essere una base di partenza per altri tipi di analisi, ad esempio uno studio sulle zone più frequentate nei diversi momenti della giornata o sui flussi più probabili. Analogamente si potrebbero sviluppare applicazioni del tipo \emph{get-together} che favoriscono l'incontro tra gli utenti e lo scambio di informazioni in chiave \emph{social}.

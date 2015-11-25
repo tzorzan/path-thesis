@@ -2,18 +2,18 @@ La parte cruciale del progetto \emph{PathS} si basa sulla gestione delle informa
 In questo capitolo saranno presentati i requisiti individuati per assolvere allo scopo del progetto e il modo in cui questi requisiti hanno guidato la definizione dell'architettura del software da sviluppare.
 
 \section{Requisiti}
-Come per l'altra componente, anche nel caso del server si è preso spunto dalla precedente versione del progetto (\emph{Path2.0}) e si è cercato di identificarne i limiti per poter essere adattato al nuovo contesto e agli scopi più ampi che sono stati definiti. Le situazioni e le necessità a cui si intende applicare il progetto sono del tipo:
+Come per l'altra componente, anche nel caso del server si è preso spunto dalla precedente versione del progetto \emph{Path2.0} e si è cercato di identificarne i limiti per poter essere adattato al nuovo contesto e agli scopi più ampi che sono stati definiti. Le situazioni e le necessità a cui si intende applicare il progetto sono del tipo:
 \begin{itemize}
 \item qual è il percorso meno rumoroso in quest’ora del giorno?
 \item che percorso devo seguire per ottenere il maggior numero di tratti all’ombra?
 \item quali sono i percorsi preferiti dagli utenti che hanno visitato questa zona?
 \end{itemize}
-Le risposte fornite dovranno sempre tenere conto della soddisfabilità della domanda (quindi fornire sempre un percorso valido) ma valutare anche le preferenze espresse dall’utente.
+Le risposte fornite dovranno sempre tenere conto della soddisfabilità della domanda,quindi fornire sempre un percorso valido, ma valutare anche le preferenze espresse dall’utente.
 
 Dal punto di vista tecnologico la soluzione precedente è stata valutata non idonea come base di partenza, in particolare presentava le seguenti caratteristiche che ne rendevano difficile una possibile evoluzione:
 \begin{itemize}
 \item il sistema era stato basato sul concetto dei percorsi accessibili e la ricerca del \emph{routing} esclusivamente come riutilizzo dei tratti noti con questa caratteristica;
-\item vi è un forte accoppiamento e dipendenza dalle API Google Maps, i cui termini di utilizzo sono cambiati nel tempo e il modo in cui sono integrate è una forzatura inefficente (interrogazioni multiple per soddisfare una singola richiesta di routing);
+\item vi è un forte accoppiamento e dipendenza dalle API Google Maps, i cui termini di utilizzo sono cambiati nel tempo e il modo in cui sono integrate è una forzatura inefficente ad esempio interrogazioni multiple per soddisfare una singola richiesta di routing;
 \item il formato di comunicazione con il client era specifico e non adattabile al nuovo contesto senza una profonda rielaborazione;
 \item il modello di persistenza delle informazioni non era adatto a gestire il nuovo \emph{set} di informazioni aggiuntive.
 \end{itemize}
@@ -62,7 +62,7 @@ I campioni così come sono ricevuti dai client sono in formato grezzo e non cons
 \subsection{Calcolo Percorsi}
 Lo scopo pensato per l'utilizzo delle informazioni raccolte è quello di fornire servizi \emph{routing} alternativi, che tengano conto dei dati raccolti per suggerire percorsi che vanno oltre la semplice regola del percorso più breve. Per questo caso d'uso son quindi coinvolti i componenti:
 \begin{itemize}
-\item \textbf{API} per definire un formato con cui i client (\emph{app} o \emph{browser}) richiedono un percorso;
+\item \textbf{API} per definire un formato con cui i client \emph{app} o \emph{browser} richiedono un percorso;
 \item implementazione di un algoritmo di \textbf{routing} che esegue il calcolo effettivo;
 \item l'algoritmo utilizzi le classi di \textbf{model} per accedere alle informazioni aggiuntive utilizzate nel calcolo.
 \end{itemize}
@@ -80,7 +80,7 @@ Per la realizzazione del progetto \emph{server} sono state selezionate alcune te
 
 Il risultato di questa selezione sono stati:
 \begin{itemize}
-\item \textbf{Framework Play!} \cite{playframework}: utilizzato per la struttura principale dell'applicazione Java. L'adozione di questo framework (già utilizzato anche in esperienze lavorative) ha permesso un rapido \emph{setup} dell'architettura \emph{Model-View-Controller} di base del server. Inoltre risultano semplificate alcune funzioni tra cui il \emph{mapping} delle richieste \emph{HTTP} previste dall'\emph{API}, la gestione della persistenza e l'\emph{Object Relational Mapping} tramite la specifica \emph{JPA} e l'implementazione \emph{Hibernate}. Il framework fornisce inoltre un facile motore di \emph{templating} per lo sviluppo delle pagine di presentazione.
+\item \textbf{Framework Play!} \cite{playframework}: utilizzato per la struttura principale dell'applicazione Java. L'adozione di questo framework, già utilizzato in altre esperienze lavorative, ha permesso un rapido \emph{setup} dell'architettura \emph{Model-View-Controller} di base del server. Inoltre risultano semplificate alcune funzioni tra cui il \emph{mapping} delle richieste \emph{HTTP} previste dall'\emph{API}, la gestione della persistenza e l'\emph{Object Relational Mapping} tramite la specifica \emph{JPA} e l'implementazione \emph{Hibernate}. Il framework fornisce inoltre un facile motore di \emph{templating} per lo sviluppo delle pagine di presentazione.
 \item \textbf{PostgresSQL} \cite{postgresql}: è il \emph{RDBMS} selezionato in quanto tra i prodotti open source più validi e diffusi allo stato attuale. Risulta inoltre particolarmente adatto con le funzioni \emph{GIS} aggiuntive fornite dalle librerie presentate in seguito e fondamentali per l'implementazione del progetto.
 \item \textbf{LeafletJS} \cite{leafletjs}: libreria Javascript utilizzata per la presentazione delle mappe interattive. E' un prodotto open source altamente configurabile e di facile integrazione. E' risultato lo strumento ideale per presentare i dati in questa forma visuale senza legarsi ad altri servizi esterni. Supporta la visualizzazione da \emph{mobile} ed è particolarmente utile per la rappresentazione di \emph{layer} sovrapposti contenenti informazioni diverse.
 \item \textbf{Bootstrap} \cite{bootstrap}: Uno dei framework \emph{HTML/CSS/JavaScript} più diffusi in assoluto, utilizzato per semplificare la realizzazione delle pagine web. Ha permesso la realizzazione di pagine web con \emph{design responsive} e graficamente gradevoli.
