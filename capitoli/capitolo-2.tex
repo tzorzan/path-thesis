@@ -71,7 +71,7 @@ Nel progetto \emph{PathS} ritroviamo tutte queste problematiche e le soluzioni a
 
 
 \section{Gestione dei dati di movimento}
-Un'altra tematica affrontata in quanto affine all'ambito del progetto è quella dei \emph{Mobility Data}. Alcuni esempi di \emph{mobility data} sono forniti in \cite{mdme} da Pelekis e Theodoridis e possono essere:
+Un'altra tematica affrontata in quanto affine all'ambito del progetto è quella dei \emph{Mobility Data}. Alcuni esempi di \emph{mobility data} sono forniti in \cite{mdme} da \citeauthor{mdme} e possono essere:
 \begin{itemize}
   \item i dati provenienti da una conversazione telefonica cellulare (la compagnia telefonica ha informazioni aggiuntive in merito al posizionamento del dispositivo);
   \item i dati provenienti da un dispositivo GPS durante una determinata attività (la combinazione tra la posizione e il momento in cui è rilevata);
@@ -141,7 +141,7 @@ Questo modello decompone lo sviluppo temporale in frammenti definiti \emph{slice
   \label{fig:rawgps}
 \end{figure}
 
-In generale il problema di \emph{trajectory recontruction} si decompone di due operazioni principali:
+In generale il problema di \emph{trajectory reconstruction} si decompone di due operazioni principali:
 \begin{itemize}
 \item \emph{data cleansing}: è la fase in cui si ripuliscono i dati grezzi dagli eventuali \emph{outlier}, ovvero campioni che è impossibile che si presentino nella realtà per le leggi della fisica, o dagli errori \emph{random} che sono piccole variazioni dal valore effettivo che dovrebbe essere misurato. Questa operazione di filtraggio è eseguita tramite arrotondamenti o altri algoritmi di elaborazione;
 \item \emph{trajectory identification}: ha l'obiettivo di interpolare la sequenza di posizioni raccolte al fine di approssimare il movimento continuo dell'oggetto.

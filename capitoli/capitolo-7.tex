@@ -121,6 +121,15 @@ L'interpretazione della stessa risposta avviene con modalità diverse nei sistem
 \item nel browser si presenta il percorso completo sulla vista mappa segnalando la lunghezza totale e un riassunto delle indicazioni di svolta.
 \end{itemize}
 
+Un esempio di interrogazione tramite il browser è visualizzato in figura \ref{fig:routing-shortest}. Il risultato della chiamata API dal formato analogo a \ref{response-routing} viene rappresentato graficamente nella mappa, in questo caso presentando in rosso il percorso più breve. Le informazioni di svolta sono presentate testualmente a fianco della cartina e il percorso può essere nascosto dalla visualizzazione tramite l'apposito pulsante.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{routing-shortest}
+  \caption{\footnotesize{Esempio di richiesta calcolo percorso più breve.}}
+  \label{fig:routing-shortest}
+\end{figure}
+
 \subsection{Percorsi con \emph{label}}
 Uno degli obiettivi principali del progetto \emph{PathS} è il calcolo del percorso sfruttando le informazioni ricevute dai campionamenti di luce e rumorosità. L'implementazione dell'algoritmo di \emph{routing} per questo caso utilizza la stessa procedura presentata al punto precedente, manipolando però le strutture dati in moda da utilizzare le informazioni aggiuntive relative alle \emph{label}.
 
@@ -183,6 +192,15 @@ Come si può vedere, il calcolo così formulato rispetta le condizioni per i cas
 La porzione di codice in cui è stato implementato il calcolo e definite le \emph{query} da fornire all'algoritmo di \emph{routing} è nella classe \texttt{app.\-implementations.\-SPDLightRouter} la quale, come gli altri servizi di calcolo del percorso, implementa l'interfaccia \texttt{app.\-interfaces.\-Router}.
 
 Con modalità del tutto analoghe, è stato implementato lo stesso algoritmo di \emph{routing} per il caso dei percorsi meno rumorosi valutando le \emph{label} di tipo \texttt{NOISE}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{routing-label}
+  \caption{\footnotesize{Esempio di richiesta calcolo percorso meno luminoso.}}
+  \label{fig:routing-label}
+\end{figure}
+
+Il risultato del calcolo del percorso considerando le \emph{label} viene presentato con le stesse modalità degli altri percorsi come si può vedere in figura \ref{fig:routing-label}. Ciascuna soluzione è raffigurata con un colore diverso e la funzione di sovrapposizione dei livelli consenti di mostrare e nascondere le alternative in modo indipendente. Per ogni percorso sono riassunte sulla destra le indicazioni di svolta per l'intero tragitto.
 
 \subsection{Servizio Map Quest}
 Come sistema di verifica dei risultati è stato implementato un quarto servizio di routing, il quale non opera sui dati a sistema ma ottiene la risposta da un servizio esterno. Questa implementazione è stata utilizzata come controprova dei percorsi proposti dagli algoritmi di \emph{routing} nonchè come alternativa di \emph{fallback} nel caso in cui le informazioni inserite a database non siano sufficienti a coprire la zona interessata dalla richiesta.

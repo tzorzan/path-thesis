@@ -18,13 +18,6 @@ Dal punto di vista tecnologico la soluzione precedente è stata valutata non ido
 \item il modello di persistenza delle informazioni non era adatto a gestire il nuovo \emph{set} di informazioni aggiuntive.
 \end{itemize}
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=\textwidth]{paths-general}
-  \caption{\footnotesize{Schema generale del progetto PathS.}}
-  \label{fig:paths-general}
-\end{figure}
-
 Considerati questi aspetti, ed in particolare le difficoltà nell'estendere il progetto esistente;  con il gruppo di lavoro si è cercato di ridefinire i requisiti del sistema ponendo l'attenzione su alcuni punti principali, ovvero:
 \begin{itemize}
 \item \textbf{raccolta campioni}: il sistema deve ricevere i campioni dalle applicazioni \emph{client} in un formato ben definito e dalle possibilità di estensione;
@@ -33,8 +26,6 @@ Considerati questi aspetti, ed in particolare le difficoltà nell'estendere il p
 \item \textbf{routing}: il sistema deve implementare un servizio di calcolo dei percorsi pedonali complesso che rielabori le informazioni precedentemente raccolte;
 \item \textbf{interfacciamento con il client}: il sistema deve comunicare con le applicazioni \emph{mobile}  e i client \emph{desktop} fornendo le informazioni necessarie alla navigazione.
 \end{itemize}
-
-Uno schema ad alto livello del funzionamento previsto è presentato in figura \ref{fig:paths-general}.
 
 Oltre ai requisiti fondamentali per il funzionamento del sistema, sono stati individuati altri criteri preferibili di carattere qualitativo da considerare nella progettazione e implementazione del software. Si possono riassumere in:
 \begin{itemize}
@@ -49,7 +40,7 @@ Basandosi sulle funzioni che deve svolgere il server, sono state identificate le
 \begin{figure}[ht]
   \centering
   \includegraphics[width=\textwidth]{paths-componenti}
-  \caption{\footnotesize{Macro componenti del del Server PathS.}}
+  \caption{\footnotesize{Macro componenti del Server PathS.}}
   \label{fig:paths-componenti}
 \end{figure}
 

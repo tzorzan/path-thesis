@@ -58,7 +58,7 @@ Si è quindi studiata una \emph{query} specifica per interrogare il servizio ed 
 Nell'implementazione del server sono stati sviluppate alcune classi di utilità che agevolano l'interrogazione e la gestione delle risposte al servizio Overpass e sono rispettivamente: \texttt{app.\-utils.\-OverpassQuery.java} e \texttt{app.\-models.\-boundaries.\-OverpassResponse.java}.
 
 \subsubsection{Mapquest}
-Oltre al servizio di inerrogazione dei dati \emph{OpenStreetMap} si è ritenuto opportuno identificare anche un servizio di \emph{routing} che operasse sugli stessi dati, interrogabile tramite \emph{webservices} dalla componente server. Sebbene questa funzione non sia indispensabile, è risultata molto utile in fase di sviluppo e come verifica del funzionamento degli algoritmi. Il servizio è inoltre utilizzato come risposta di \emph{fallback} nel caso non vi siano dati disponibili da fornire ai \emph{client}.
+Oltre al servizio di interrogazione dei dati \emph{OpenStreetMap} si è ritenuto opportuno identificare anche un servizio di \emph{routing} che operasse sugli stessi dati, interrogabile tramite \emph{webservices} dalla componente server. Sebbene questa funzione non sia indispensabile, è risultata molto utile in fase di sviluppo e come verifica del funzionamento degli algoritmi. Il servizio è inoltre utilizzato come risposta di \emph{fallback} nel caso non vi siano dati disponibili da fornire ai \emph{client}.
 
 La soluzione individuata è quella fornita da \emph{MapQuest} \cite{mapquest}. Come per gli altri servizi, le interrogazioni avvengono tramite \emph{API HTTP} in formato \emph{JSON} e quindi gestite da alcune classi \emph{Java} di supporto per l'interrogazione (\texttt{app.\-utils.\-MapQuestQuery.java}) e l'interpretazione (\texttt{app.\-models.\-boundaries.\-MapQuestResponse.java}).
 
@@ -190,7 +190,7 @@ I due valori calcolati sono quindi combinati per ottenere la valutazione totale 
 $$ F_s(c_i-1^t \rightarrow c_i^s) = N(c_i^s) * V(c_i-1^t \rightarrow c_i^s), 2 \leq i \leq n $$
 dove $N$ è la funzione per il calcolo della probabilità di osservazione e $V$ è la funzione di calcolo della probabilità di trasmissione tra il candidato $c_i-1^t$ per il punto $p_i-1$ e il candidato $c_i^s$ per il punto $p_i$.
 
-La valutazione secondo l'analisi temporale rsulta utile per i casi in cui l'analisi spaziale non sia determinante come l'esempio riportato in figura: \ref{fig:st-mapmatching-temporal}. La sola analisi geometrica non fornisce indicazioni rilevanti come invece può essere il fatto di consderare la velocità con cui si muove l'oggetto rispetto al tratto di rete di trasporto. La comparazione tra la velocità media delle rilevazioni GPS e la velocità indicativa del tratto è definita in dettaglio nel \cite[paragrafo 5.3]{stmapmatching}.
+La valutazione secondo l'analisi temporale rsulta utile per i casi in cui l'analisi spaziale non sia determinante come l'esempio riportato in figura \ref{fig:st-mapmatching-temporal}. La sola analisi geometrica non fornisce indicazioni rilevanti come invece può essere il fatto di consderare la velocità con cui si muove l'oggetto rispetto al tratto di rete di trasporto. La comparazione tra la velocità media delle rilevazioni GPS e la velocità indicativa del tratto è definita in dettaglio nel \cite[paragrafo 5.3]{stmapmatching}.
 \begin{figure}[h]
   \centering
   \includegraphics[width=.5\textwidth]{st-mapmatching-temporal}
