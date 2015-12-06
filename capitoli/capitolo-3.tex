@@ -1,59 +1,82 @@
-Tra le due componenti in cui si articola il progetto, la prima sviluppata è stata la componente \emph{client}. Questa parte consiste sostanzialmente di una applicazione per dispositivi \emph{smartphone} Android, completamente riscritta a partire da alcuni sviluppi precedenti per poter assolvere alle nuove funzioni specifiche di \emph{PathS}. Le attività di studio e implementazione sono state svolte da Stefano Tombolini e documentate nella relativa tesi di Laurea \cite{tesitombolini}. Si riassumono nel capitolo seguente i requisiti che sono stati identificati e i criteri principali che hanno determinato lo sviluppo del software così da fornire una visione più completa dello sviluppo del progetto. 
+La parte cruciale del progetto \emph{PathS} si basa sulla gestione delle informazioni aggiuntive relative ai percorsi pedonali e la possibilità di sfruttarle per fornire un servizio alternativo agli utenti finali. La persistenza, la gestione e l'elaborazione di questi dati avviene nella componente \emph{server}. 
+In questo capitolo saranno presentati i requisiti individuati per assolvere allo scopo del progetto e il modo in cui questi requisiti hanno guidato la definizione dell'architettura del software da sviluppare.
 
 \section{Requisiti}
-Il client mobile \emph{PathS} presenta tutte le caratteristiche di una applicazione sviluppata secondo il paradigma \emph{Web\textsuperscript{2}}. 
-Le funzioni principali che deve svolgere possono essere riassunte in:
+Come per la componente \emph{client}, anche nel caso del \emph{server} si è preso spunto dalla precedente versione del progetto \emph{Path2.0} e si è cercato di identificarne i limiti per poter essere adattato al nuovo contesto e agli scopi più ampi che sono stati definiti. Le situazioni e le necessità a cui si intende dare risposta tramite il progetto sono del tipo:
 \begin{itemize}
-\item raccogliere dei valori riguardante l'ambiente circostante tramite i sensore di luminosità e microfono;
-\item tenere traccia degli spostamenti effettuati e abbinarli ai relativi campioni;
-\item offrire le indicazioni di percorso secondo la destinazione e le modalità richieste dall'utente;
-\item cercare di coinvolgere il più possibile l'utente incentivando l'uso dell'applicazione.
+\item qual è il percorso meno rumoroso in quest’ora del giorno?
+\item che percorso devo seguire per ottenere il maggior numero di tratti all’ombra?
+\item quali sono i percorsi preferiti dagli utenti che hanno visitato questa zona?
+\end{itemize}
+Le risposte fornite dovranno sempre tenere conto della soddisfabilità della domanda,quindi fornire sempre un percorso valido, ma valutare anche le preferenze espresse dall’utente.
+
+Dal punto di vista tecnologico la soluzione precedente è stata valutata non idonea come base di partenza, in particolare presentava le seguenti caratteristiche che ne rendevano difficile una possibile evoluzione:
+\begin{itemize}
+\item il sistema era stato basato sul concetto dei percorsi accessibili e la ricerca del \emph{routing} esclusivamente come riutilizzo dei tratti noti con questa caratteristica;
+\item vi è un forte accoppiamento e dipendenza dalle API Google Maps, i cui termini di utilizzo sono cambiati nel tempo e il modo in cui sono integrate è una forzatura inefficente ad esempio interrogazioni multiple per soddisfare una singola richiesta di routing;
+\item il formato di comunicazione con il client era specifico e non adattabile al nuovo contesto senza una profonda rielaborazione;
+\item il modello di persistenza delle informazioni non era adatto a gestire il nuovo \emph{set} di informazioni aggiuntive.
 \end{itemize}
 
-Alcuni di questi requisiti possono essere identificati come \emph{funzionali} e sono indispensabili per gli scopi generali del progetto. Le operazioni di campionamento tramite i sensori ambientali e il tracciamento della posizione tramite GPS sono gli elementi fondamentali richiesti per poter disporre dei dati necessari alle successive elaborazioni. Tuttavia nessun utente finale sarebbe motivato nell'eseguire queste operazioni se l'applicazione non fornisse una qualche altra utilità. Un gruppo di utenti volontari può essere selezionato per alcune campagne di raccolta, tuttavia per motivare un utilizzatore occasionale era necessario adottare altre strategie. 
-Per questo sono stati identificati gli altri due requisiti, così da motivare l'utilizzo dell'applicazione stessa. Si è pensato che fornendo direttamente il servizio di \emph{routing} dallo smartphone, si potevano sfruttare i risultati del servizio ma contemporaneamente contribuire allo stesso raccogliendo ulteriori informazioni durante il percorso. Per rendere ottimali i dati raccolti durante l'uso, era inoltre necessario ideare uno stratagemma affinchè il dispositivo fosse in una condizione ideale per il campionamento. La soluzione è venuta dalla proposta di adottare delle funzioni di \emph{Augmented Reality} (Realtà Aumentata). In questo modo non solo si sarebbe ottenuto un maggiore coinvolgimento dell'utente finale, ma inconsapevolmente l'utilizzatore stesso avrebbe mantenuto lo \emph{smartphone} fuori dalla tasca in condizioni perfette per le misurazioni tramite i sensori.
-Seguendo queste indicazioni quindi, si è strutturata una applicazione \emph{Android} composta principalmente di 3 moduli:
+Considerati questi aspetti, ed in particolare le difficoltà nell'estendere il progetto esistente;  con il gruppo di lavoro si è cercato di ridefinire i requisiti del sistema ponendo l'attenzione su alcuni punti principali, ovvero:
 \begin{itemize}
+\item \textbf{raccolta campioni}: il sistema deve ricevere i campioni dalle applicazioni \emph{client} in un formato ben definito e dalle possibilità di estensione;
+\item \textbf{persistenza}: il sistema deve memorizzare in modo efficiente e coerente le informazioni ricevute relative a campioni di diversa tipologia;
+\item \textbf{associazione dei campioni ai percorsi}: il sistema deve eseguire l'operazione di associazione delle informazioni raccolte dai sistemi client (sensori) alle informazioni di geolocalizzazione e cartografia (tratti stradali);
+\item \textbf{routing}: il sistema deve implementare un servizio di calcolo dei percorsi pedonali complesso che rielabori le informazioni precedentemente raccolte;
+\item \textbf{interfacciamento con il client}: il sistema deve comunicare con le applicazioni \emph{mobile}  e i client \emph{desktop} fornendo le informazioni necessarie alla navigazione.
+\end{itemize}
 
-\begin{figure}[ht]
+Oltre ai requisiti fondamentali per il funzionamento del sistema, sono stati individuati altri criteri preferibili di carattere qualitativo da considerare nella progettazione e implementazione del software. Si possono riassumere in:
+\begin{itemize}
+\item \textbf{suddivisione delle responsabilità}: definire in modo specifico le funzioni svolte da ciascun componente del sistema, evitando elementi che svolgono funzioni troppo complesse o che accoppiano troppi elementi. Questo approccio consente una migliore testabilità delle sotto-componenti e la possibilità di rivedere e riprogettare alcuni dettagli senza dover manipolare l'intero prodotto software;
+\item \textbf{astrazione}: identificare la funzione logica di ciascun componente concentrandosi sulla sua interfaccia prima di proseguire nell'implementazione. Questo consente di delineare con precisione il ruolo che dovrà svolgere, precondizioni,risultati attesi e i confini concettuali in cui opera. Rispettare questo criterio rende più facile lo sviluppo e il miglioramento dell'implementazione dei componenti senza doverne ridefinire la funzione logica e riducendo le ripercussioni sugli altri elementi dell'architettura;
+\item \textbf{estensibilità}: rendere agevole sia in termini architetturali che implementativi la possibilità di migliorare ed estendere il sistema. L'obiettivo del progetto è stato volutamente limitato ad un primo risultato tangibile, considerando però che vi sia la possibilità di migliorare ed estendere le sue parti in modo facile e coerente con la base che si andrà a sviluppare.
+\end{itemize}
+
+\section{Componenti}
+Basandosi sulle funzioni che deve svolgere il server, sono state identificate le componenti logiche principali da sviluppare. La figura \ref{fig:paths-componenti} riassume in modo completo tutti gli elementi che vanno a comporre il sistema sviluppato per il progetto PathS. 
+
+\begin{figure}[!ht]
   \centering
-  \includegraphics[width=.5\textwidth]{app-mappa}
-  \caption{\footnotesize{Modalità \emph{Mappa} dell'applicazione mobile PathS.}}
-  \label{fig:app-mappa}
+  \includegraphics[width=\textwidth]{paths-componenti}
+  \caption{\footnotesize{Macro componenti del progetto PathS.}}
+  \label{fig:paths-componenti}
 \end{figure}
 
-\item \textbf{Mappa}: E' la schermata con la quale l'utente può selezionare una destinazione e visualizzare il percorso suggerito. In questa sezione l'applicazione comunica con i servizi Google per la selezione dei luoghi e la ricerca della destinazione, mentre interroga la componente \emph{server} di \emph{PathS} per richiedere i percorsi da suggerire. Il risultato è visualizzato in una vista a cartina stile Google Maps.
+Si possono distinguere due aree di competenza principali: la parte client, deputata alla raccolta dei dati dai sensori e all'interazione con gli utenti finali e la parte server, la quale raccoglie invece tutte le funzioni di ricezione, elaborazione e calcolo dei percorsi. Nello schema le componenti rappresentate sono funzioni logiche, le quali sono state realizzate tramite uno o più elementi software per i casi più complessi. Le tecnologie rilevanti per ciascuna funzione sono indicate come \emph{box} dallo sfondo giallo. Gli elementi logici hanno tra loro dei rapporti di dipendenza e interazione, indicate con frecce bidirezionali piene. Altri elementi invece appartengono fisicamente a contesti di esecuzione diversi (ad esempio i servizi esterni) e per questo richiedono la comunicazione tramite un protocollo di rete. Questo tipo di comunicazione sono indicati con frecce dal tratto singolo e possono rappresentare una comunicazione mono o bidirezionale.
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=.5\textwidth]{app-navigatore}
-  \caption{\footnotesize{Modalità \emph{Navigatore} dell'applicazione mobile PathS.}}
-  \label{fig:app-navigatore}
-\end{figure}
+Per ciascun dei caso d'uso, si presenta in dettaglio il ruolo delle componenti e il modo in cui partecipano al raggiungimento del risultato finale.
 
-\item \textbf{Navigatore}: E' la modalità con la quale si guida l'utente durante il percorso pedonale: si forniscono le indicazioni di svolta ed altre informazioni aggiuntive presentandole in realtà aumentata. L'utente può quindi mantenere il dispositivo in posizione verticale inquadrando l'orizzonte con la fotocamera e visualizzare in modo sovrapposto le informazioni di cui necessita. Durante questa modalità sono eseguiti in \emph{background} i campionamenti di rumorosità e luminosità che saranno successivamente inviati al server.
-\item \textbf{Impostazioni}: In questa parte dell'applicazione è possibile configurare alcuni parametri di funzionamento e di visualizzazione.
-\end{itemize} 
+\subsection{Ricezione dei campioni}
+La prima componente che partecipa alla funzione di ricezione dei campioni si occupa di dialogare con l'applicazione client. Si è pensato di definire una \emph{API} su protocollo \emph{HTTP} da utilizzare per tutte le chiamate di invio dati: in questo modo utilizzando un formato semplice che rispetta gli attuali \emph{standard de-facto}, risulta facilmente implementabile con qualsiasi tecnologia \emph{client} ed eventualmente da altre sorgenti dati future. Il componente \textbf{API} si occupa quindi di deserializzare i dati della richiesta e riorganizzarli per la persistenza. Il salvataggio avviene su apposito \textbf{Database} ma mediato da un componente intermedio di \textbf{modellazione dati}. Risultano quindi più agevoli le operazioni di interrogazione e salvataggio, nonchè la leggibilità e semplicità dell'implementazione.
 
-I tre moduli consentono all'applicazione di svolgere tutte le funzioni identificate dai requisiti.
+\subsection{Elaborazione dei campioni}
+I campioni così come sono ricevuti dai client sono in formato grezzo e non consentono di sfruttare le informazioni in esse contenute. Il passo principale per l'utilizzo dei dati è quello di associare ciascun campionamento ad un segmento della rete di trasporto. Tutto questo procedimento è sintetizzato con l'espressione \textbf{Map Matching} che è di fatto l'algoritmo che esegue tale associazione. Il \emph{matching} viene eseguito sia in modo autonomo dal server che tramite invocazione specifica dell'\textbf{API}. Il risultato delle esecuzioni dell'algoritmo viene comunque salvato a \textbf{database} tramite le apposite classi di \textbf{model}. Le informazioni relative alla cartografia sono ottenute mediante l'interrogazione di un servizio esterno utilizzando una \emph{API} specifica.
+
+\subsection{Calcolo Percorsi}
+Lo scopo pensato per l'utilizzo delle informazioni raccolte è quello di fornire servizi \emph{routing} alternativi, che tengano conto dei dati raccolti per suggerire percorsi che vanno oltre la semplice regola del percorso più breve. Per questo caso d'uso son quindi coinvolti i componenti:
+\begin{itemize}
+\item \textbf{API} per definire un formato con cui i client \emph{app} o \emph{browser} richiedono un percorso;
+\item implementazione di un algoritmo di \textbf{routing} che esegue il calcolo effettivo;
+\item l'algoritmo utilizzi le classi di \textbf{model} per accedere alle informazioni aggiuntive utilizzate nel calcolo.
+\end{itemize}
+
+\subsection{Accesso da Browser}
+Per tutte le funzionalità principali del server si è pensato di dare un accesso di \emph{monitoraggio} tramite \emph{web browser}. In questo modo è possibile accedere facilmente alle informazioni gestite dal sistema, tramite visualizzazioni grafiche su mappa. La presentazione dei dati recuperati tramite le classi \textbf{model} è implementata con pagine \emph{html} e linguaggio \emph{Javascript} eseguito lato \emph{client}. Queste componenti possono essere raggruppate con la definizione di \textbf{web views}.
 
 \section{Tecnologie}
-Considerando gli sviluppi precedenti e la disponibilità di dispositivi, la piattaforma scelta per lo sviluppo del client è stato il sistema \emph{Android}. Questo sistema operativo è ormai largamente diffuso sia nei dispositivi tablet che smartphone anche di fascia economica, risultando un ottimo candidato per poter raggiungere una larga base di utenza. Le caratteristiche \emph{Open Source} del sistema hanno reso inoltre più agevoli le modalità di sviluppo e installazione del software piuttosto che le alternative proprietarie ad esempio \emph{iOS}.
-Le tecnologia principale con cui è stata realizzata l'applicazione è stata quindi l'\emph{Android Software Development Kit (SDK)}. Questo framework mette a disposizione tutte le librerie e i \emph{tool} necessari allo sviluppo del modulo client. Oltre alle funzioni di interfacciamento grafico e logica applicativa, l'\emph{SDK} consente anche di sfruttare in modo agevolato i sensori hardware del dispostivo (luminosità e microfono) nonchè il sotto-sistema \emph{GPS}, tutte funzioni particolarmente critiche per la riuscita del progetto.
-Un'altra libreria fondamentale utilizzata nello sviluppo dell'applicazione mobile \emph{PathS} è stata \emph{Wikitude}. Questa libreria è stata selezionata tra altre analoghe, e il suo ruolo è stato quello di offrire le funzionalità di realtà aumenate richieste dalla soluzione. 
-Per ulteriori dettagli riguardanti la selezione degli strumenti e l'implementazione dell'applicazione client si rimanda alla tesi specifica \cite{tesitombolini}.
-
-\section{Stato attuale}
-In generale l'applicazione \emph{client} presenta tutte le carateristiche indispensabili dal punto di vista funzionale per consentire lo sviluppo della controparte \emph{server}.
-
-L'operazione di trasmissione dei campioni al server viene eseguita correttamente, così come l'interrogazione dei risultati disponibili e la presentazione degli stessi all'utente in modalità mappa e navigazione \emph{turn by turn}.
-
-Tuttavia ci sono alcune aree importanti in cui una revisione consentirebbe un miglioramento dei dati forniti alla componente \emph{server} e un utilizzo più pratico dell'applicazione. 
-I punti di intervento proposti si riassumono in:
+Per la realizzazione del progetto \emph{server} sono state selezionate alcune tecnologie e librerie utilizzate in modo trasversale per lo sviluppo dell'applicazione. I criteri adottati in questa scelta si riassumono in:
 \begin{itemize}
-\item Correzione della scala dei valori raccolti e normalizzazione degli stessi, in particolare per quanto riguardo la luminosità. Nei test eseguiti molti valori raggiungono il $100\%$, presentando pochi casi con valori intermedi nonostante le diverse situazioni reali di applicazione. Questa imprecisione si ripercuote sull'intero sistema e i servizi forniti, influenzando direttamente i risultati finali.
-\item Miglioramento delle modalità con cui si comunica all'utente la trasmissione dei dati al server, rendendo esplicito il momento in cui tale comunicazione avviene ed eventuali malfunzionamenti (rete non presente, connessione fallita, etc).
-\item Miglioramento della responsività della app, in particolare nell'accesso al modulo di navigazione che spesso non è \emph{smooth} in particolare in dispositivi non performanti. In generale i rallentamenti nel feedback e il funzionamento scattoso peggiorano l'esperienza utente e disincentivano l'utilizzo della app.
-\item Verificare il consumo di risorse che si verifica durante l'esecuzione di tutte le operazioni in \emph{background}, valutando una ottimizzazione delle stesse. In molti casi si è verificato un consumo abbondante della carica batteria e talvolta anche un surriscaldamento del dispositivo.
+\item preferenza per gli strumenti \emph{Open Source} facilitando accesso al software, la gestione delle licenze e lo sviluppo di eventuali modifiche;
+\item preferenza per gli strumenti di larga adozione, per i quali sono disponibili \emph{on-line} documentazione ed esperienza diretta degli utenti,
+\item preferenza per gli strumenti già adottati in altri progetti, in modo da ridurre i tempi di apprendimento e di configurazione.
 \end{itemize}
-Al netto degli spunti di possibile miglioramento, lo stato attuale dell'applicazione mobile ha comunque consentito e supportato lo sviluppo della componente server e quindi dell'intera soluzione \emph{PathS}. Le versioni aggiornate dell'applicazione possono essere scaricate dal sito del progetto \cite{paths-graphs}.
+
+Il risultato di questa selezione sono stati:
+\begin{itemize}
+\item \textbf{Framework Play!} \cite{playframework}: utilizzato per la struttura principale dell'applicazione Java. L'adozione di questo framework, già utilizzato in altre esperienze lavorative, ha permesso un rapido \emph{setup} dell'architettura \emph{Model-View-Controller} di base del server. Inoltre risultano semplificate alcune funzioni tra cui il \emph{mapping} delle richieste \emph{HTTP} previste dall'\emph{API}, la gestione della persistenza e l'\emph{Object Relational Mapping} tramite la specifica \emph{JPA} e l'implementazione \emph{Hibernate}. Il framework fornisce inoltre un facile motore di \emph{templating} per lo sviluppo delle pagine di presentazione.
+\item \textbf{PostgresSQL} \cite{postgresql}: è il \emph{RDBMS} selezionato in quanto tra i prodotti open source più validi e diffusi allo stato attuale. Risulta inoltre particolarmente adatto con le funzioni \emph{GIS} aggiuntive fornite dalle librerie presentate in seguito e fondamentali per l'implementazione del progetto.
+\item \textbf{LeafletJS} \cite{leafletjs}: libreria Javascript utilizzata per la presentazione delle mappe interattive. E' un prodotto open source altamente configurabile e di facile integrazione. E' risultato lo strumento ideale per presentare i dati in questa forma visuale senza legarsi ad altri servizi esterni. Supporta la visualizzazione da \emph{mobile} ed è particolarmente utile per la rappresentazione di \emph{layer} sovrapposti contenenti informazioni diverse.
+\item \textbf{Bootstrap} \cite{bootstrap}: Uno dei framework \emph{HTML/CSS/JavaScript} più diffusi in assoluto, utilizzato per semplificare la realizzazione delle pagine web. Ha permesso la realizzazione di pagine web con \emph{design responsive} e graficamente gradevoli.
+\end{itemize}
